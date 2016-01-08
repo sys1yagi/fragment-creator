@@ -25,10 +25,10 @@ MainFragment instance = MainFragmentCreator.newInstance("keyword");
 MainFragment instance = MainFragmentCreator.newInstance("keyword", "user_id");
 ```
 
-### Read the argument with the ArgumentsReader
+### Read the arguments with the ArgumentsReader
 
 ```java
-MainFragmentArgumentsReader arguments = MainFragmentArgumentsReader(getArguments());
+MainFragmentArguments arguments = MainFragmentArguments(getArguments());
 
 String keyword = arguments.getKeyword();
 String userId = arguments.getUserId();
