@@ -1,0 +1,32 @@
+package com.sys1yagi.fragmentcreator.fragment;
+
+import android.os.Bundle;
+import android.os.Parcelable;
+import com.sys1yagi.fragmentcreator.Creator;
+import java.io.Serializable;
+import java.lang.CharSequence;
+import java.lang.String;
+
+public final class MainFragmentCreator extends Creator {
+
+    public static MainFragment newInstance(String keyword,boolean flag,byte aByte,char aChar,short aShort,int anInt,long aLong,float aFloat,double aDouble,CharSequence charSequence,Parcelable parcelable,Serializable serializable) {
+        MainFragment fragment = new MainFragment();
+
+        Bundle args = new Bundle();
+        args.putString("keyword", keyword);
+        args.putBoolean("flag", flag);
+        args.putByte("aByte", aByte);
+        args.putChar("aChar", aChar);
+        args.putShort("aShort", aShort);
+        args.putInt("anInt", anInt);
+        args.putLong("aLong", aLong);
+        args.putFloat("aFloat", aFloat);
+        args.putDouble("aDouble", aDouble);
+        args.putCharSequence("charSequence", charSequence);
+        args.putParcelable("parcelable", parcelable);
+        args.putSerializable("serializable", serializable);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+}

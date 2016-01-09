@@ -1,0 +1,37 @@
+package com.sys1yagi.fragmentcreator.fragment;
+
+import android.os.Bundle;
+import com.sys1yagi.fragmentcreator.Creator;
+import java.lang.String;
+
+public final class MainFragmentCreator extends Creator {
+
+    public static MainFragment newInstance() {
+        return new MainFragment();
+    }
+
+    public static MainFragment newInstanceWithkeyword(String keyword) {
+        MainFragment fragment = new MainFragment();
+        Bundle args = new Bundle();
+        args.putString("keyword", keyword);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static MainFragment newInstanceWithuserId(String userId) {
+        MainFragment fragment = new MainFragment();
+        Bundle args = new Bundle();
+        args.putString("userId", userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static MainFragment newInstance(String keyword, String userId) {
+        MainFragment fragment = new MainFragment();
+        Bundle args = new Bundle();
+        args.putString("keyword", keyword);
+        args.putString("userId", userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+}
