@@ -7,7 +7,7 @@ __UNDER DEVELOPMENT__
 ### Annotate the arguments of Fragment
 
 ```java
-@AutoCreator
+@FragmentCreator
 public class MainFragment extends Fragment {
 
     @Args
