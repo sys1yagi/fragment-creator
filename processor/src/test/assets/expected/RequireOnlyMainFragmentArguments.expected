@@ -2,32 +2,18 @@ package com.sys1yagi.fragmentcreator.fragment;
 
 import android.os.Bundle;
 import com.sys1yagi.fragmentcreator.ArgumentsReader;
-import java.lang.String;
 
 public final class MainFragmentArguments extends ArgumentsReader {
 
-    private final String keyword;
-
-    private final String userId;
-
-    public MainFragmentArguments(Bundle args){
-        super(args);
-
-        keyword = args.getString("keyword");
-        userId = args.getString("userId");
-        checkRequired();
+    public static void read(MainFragment fragment){
+        Bundle args = fragment.getArguments();
+        fragment.keyword = args.getString("keyword");
+        fragment.userId = args.getString("userId");
+        checkRequired(fragment);
     }
 
-    public void checkRequired() {
-        checkRequire(keyword, "keyword");
-        checkRequire(userId, "userId");
-    }
-
-    public String getKeyword(){
-        return keyword;
-    }
-
-    public String getUserId(){
-        return userId;
+    public static void checkRequired(MainFragment fragment) {
+        ArgumentsReader.checkRequire(fragment.keyword, "keyword");
+        ArgumentsReader.checkRequire(fragment.userId, "userId");
     }
 }

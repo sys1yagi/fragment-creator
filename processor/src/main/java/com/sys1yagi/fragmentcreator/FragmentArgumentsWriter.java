@@ -1,7 +1,6 @@
 package com.sys1yagi.fragmentcreator;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -34,11 +33,8 @@ public class FragmentArgumentsWriter {
 
         List<MethodSpec> methodSpecs = new ArrayList<>();
 
-        classBuilder.addFields(createFields(model.getArgsList()));
-
-        methodSpecs.add(createCheckRequired(model.getArgsList()));
-        methodSpecs.add(createConstructor(model));
-        methodSpecs.addAll(createGetter(model.getArgsList()));
+        methodSpecs.add(createReadMethod(model));
+        methodSpecs.add(createCheckRequired(model));
 
         classBuilder.addMethods(methodSpecs);
 
@@ -49,15 +45,16 @@ public class FragmentArgumentsWriter {
                 .writeTo(filer);
     }
 
-    private static MethodSpec createConstructor(FragmentCreatorModel model) {
-        MethodSpec.Builder builder = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(ClassName.get("android.os", "Bundle"), "args")
-                .addStatement("super(args)");
+    private static MethodSpec createReadMethod(FragmentCreatorModel model) {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("read")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addParameter(ClassName.get(model.getElement()), "fragment");
+
+        builder.addStatement("$T args = fragment.getArguments()", ClassName.get("android.os", "Bundle"));
 
         List<VariableElement> argsList = model.getArgsList();
         createParameterInitializeStatement(builder, argsList);
-        builder.addStatement("checkRequired()");
+        builder.addStatement("checkRequired(fragment)");
 
         return builder.build();
     }
@@ -87,58 +84,59 @@ public class FragmentArgumentsWriter {
         params.forEach(param -> {
             //TODO check require
             String key = param.getSimpleName().toString();
-            String format = null;
+            String prefix = "fragment.$N = ";
+            String format = prefix;
 
             switch (param.asType().toString()) {
                 case "java.lang.String":
-                    format = "$N = args.getString($S)";
+                    format += "args.getString($S)";
                     break;
                 case "boolean":
                 case "java.lang.Boolean":
-                    format = "$N = args.getBoolean($S)";
+                    format += "args.getBoolean($S)";
                     break;
                 case "byte":
                 case "java.lang.Byte":
-                    format = "$N = args.getByte($S)";
+                    format += "args.getByte($S)";
                     break;
                 case "char":
                 case "java.lang.Character":
-                    format = "$N = args.getChar($S)";
+                    format += "args.getChar($S)";
                     break;
                 case "short":
                 case "java.lang.Short":
-                    format = "$N = args.getShort($S)";
+                    format += "args.getShort($S)";
                     break;
                 case "int":
                 case "java.lang.Integer":
-                    format = "$N = args.getInt($S)";
+                    format += "args.getInt($S)";
                     break;
                 case "long":
                 case "java.lang.Long":
-                    format = "$N = args.getLong($S)";
+                    format += "args.getLong($S)";
                     break;
                 case "float":
                 case "java.lang.Float":
-                    format = "$N = args.getFloat($S)";
+                    format += "args.getFloat($S)";
                     break;
                 case "double":
                 case "java.lang.Double":
-                    format = "$N = args.getDouble($S)";
+                    format += "args.getDouble($S)";
                     break;
                 case "java.lang.CharSequence":
-                    format = "$N = args.getCharSequence($S)";
+                    format += "args.getCharSequence($S)";
                     break;
                 case "android.os.Parcelable":
-                    format = "$N = args.getParcelable($S)";
+                    format += "args.getParcelable($S)";
                     break;
                 case "java.io.Serializable":
-                    format = "$N = args.getSerializable($S)";
+                    format += "args.getSerializable($S)";
                     break;
                 default:
                     //TODO extract base type
             }
 
-            if (format == null || "".equals(format)) {
+            if (prefix.equals(format)) {
                 throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
             }
 
@@ -146,47 +144,18 @@ public class FragmentArgumentsWriter {
         });
     }
 
-    private static MethodSpec createCheckRequired(List<VariableElement> args) {
+    private static MethodSpec createCheckRequired(FragmentCreatorModel model) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("checkRequired")
-                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ClassName.get(model.getElement()), "fragment")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class);
-        args.stream()
+        model.getArgsList().stream()
                 .filter(element -> element.getAnnotation(Args.class).require())
                 .forEach(element -> {
                     String name = element.getSimpleName().toString();
-                    builder.addStatement("checkRequire($N, $S)", name, name);
+                    builder.addStatement("$T.checkRequire(fragment.$N, $S)", ClassName.get(ArgumentsReader.class), name,
+                            name);
                 });
         return builder.build();
-    }
-
-    private static List<FieldSpec> createFields(List<VariableElement> args) {
-        List<FieldSpec> fieldSpecs = new ArrayList<>();
-        args.forEach(arg -> fieldSpecs.add(
-                FieldSpec.builder(ClassName.get(arg.asType()),
-                        arg.getSimpleName().toString(),
-                        Modifier.PRIVATE, Modifier.FINAL)
-                        .build()));
-        return fieldSpecs;
-    }
-
-    private static List<MethodSpec> createGetter(List<VariableElement> args) {
-        List<MethodSpec> methodSpecs = new ArrayList<>();
-
-        args.forEach(arg -> {
-            String name = arg.getSimpleName().toString();
-            methodSpecs.add(MethodSpec
-                    .methodBuilder("get" + camelCase(name))
-                    .addModifiers(Modifier.PUBLIC)
-                    .returns(ClassName.get(arg.asType()))
-                    .addStatement("return $N", name)
-                    .build()
-            );
-        });
-
-        return methodSpecs;
-    }
-
-    static String camelCase(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
