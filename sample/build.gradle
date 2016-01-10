@@ -24,11 +24,10 @@ android {
 }
 
 dependencies {
-    compile project(':library')
-    apt project(':processor')
-
-//    apt 'com.github.sys1yagi.fragment-creator:processor:0.0.2'
-//    compile 'com.github.sys1yagi.fragment-creator:library:0.0.2'
+//    compile project(':library')
+//    apt project(':processor')
+    apt 'com.github.sys1yagi.fragment-creator:processor:0.0.3'
+    compile 'com.github.sys1yagi.fragment-creator:library:0.0.3'
 
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'

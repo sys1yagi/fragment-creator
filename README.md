@@ -81,8 +81,8 @@ String userId = arguments.getUserId();
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.0.2'
-compile 'com.github.sys1yagi.fragment-creator:library:0.0.2'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.0.3'
+compile 'com.github.sys1yagi.fragment-creator:library:0.0.3'
 ```
 
 ## Development
