@@ -29,7 +29,7 @@ public class FragmentArgumentsWriter {
     public void write(Filer filer) throws IOException {
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(model.getArgumentsClassName());
         classBuilder.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-        ClassName superClassName = ClassName.get(Arguments.class);
+        ClassName superClassName = ClassName.get(ArgumentsReader.class);
         classBuilder.superclass(superClassName);
 
         List<MethodSpec> methodSpecs = new ArrayList<>();

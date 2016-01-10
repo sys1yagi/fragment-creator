@@ -35,7 +35,7 @@ public class FragmentCreatorWriter {
     public void write(Filer filer) throws IOException {
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(model.getCreatorClassName());
         classBuilder.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-        ClassName superClassName = ClassName.get(Creator.class);
+        ClassName superClassName = ClassName.get(FragmentCreator.class);
         classBuilder.superclass(superClassName);
 
         List<MethodSpec> methodSpecs = new ArrayList<>();

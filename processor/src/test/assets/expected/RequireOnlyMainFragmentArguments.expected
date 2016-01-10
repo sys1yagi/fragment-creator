@@ -1,10 +1,10 @@
 package com.sys1yagi.fragmentcreator.fragment;
 
 import android.os.Bundle;
-import com.sys1yagi.fragmentcreator.Arguments;
+import com.sys1yagi.fragmentcreator.ArgumentsReader;
 import java.lang.String;
 
-public final class MainFragmentArguments extends Arguments {
+public final class MainFragmentArguments extends ArgumentsReader {
 
     private final String keyword;
 

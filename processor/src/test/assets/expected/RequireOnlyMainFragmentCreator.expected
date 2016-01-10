@@ -1,10 +1,10 @@
 package com.sys1yagi.fragmentcreator.fragment;
 
 import android.os.Bundle;
-import com.sys1yagi.fragmentcreator.Creator;
+import com.sys1yagi.fragmentcreator.FragmentCreator;
 import java.lang.String;
 
-public final class MainFragmentCreator extends Creator {
+public final class MainFragmentCreator extends FragmentCreator {
 
     public static MainFragment newInstance(String keyword, String userId) {
         MainFragment fragment = new MainFragment();

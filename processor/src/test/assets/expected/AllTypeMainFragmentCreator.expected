@@ -2,12 +2,12 @@ package com.sys1yagi.fragmentcreator.fragment;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import com.sys1yagi.fragmentcreator.Creator;
+import com.sys1yagi.fragmentcreator.FragmentCreator;
 import java.io.Serializable;
 import java.lang.CharSequence;
 import java.lang.String;
 
-public final class MainFragmentCreator extends Creator {
+public final class MainFragmentCreator extends FragmentCreator {
 
     public static MainFragment newInstance(String keyword,boolean flag,byte aByte,char aChar,short aShort,int anInt,long aLong,float aFloat,double aDouble,CharSequence charSequence,Parcelable parcelable,Serializable serializable) {
         MainFragment fragment = new MainFragment();

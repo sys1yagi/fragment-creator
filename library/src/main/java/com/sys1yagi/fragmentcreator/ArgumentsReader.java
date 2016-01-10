@@ -5,11 +5,11 @@ import com.sys1yagi.fragmentcreator.exception.UnsupportedTypeException;
 
 import android.os.Bundle;
 
-public class Arguments {
+public class ArgumentsReader {
 
     Bundle argument;
 
-    public Arguments(Bundle argument) {
+    public ArgumentsReader(Bundle argument) {
         this.argument = argument;
     }
 
