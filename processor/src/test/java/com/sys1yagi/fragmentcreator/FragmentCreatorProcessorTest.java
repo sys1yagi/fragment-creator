@@ -57,9 +57,12 @@ public class FragmentCreatorProcessorTest {
                 .processedWith(new FragmentCreatorProcessor())
                 .compilesWithoutError()
                 .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/RequireOnlyMainFragmentCreator.expected")));
+                .generatesSources(
+                        JavaFileObjects.forSourceString("MainFragmentCreator",
+                                AssetsUtils.readString("expected/RequireOnlyMainFragmentCreator.expected")),
+                        JavaFileObjects.forSourceString("MainFragmentArguments",
+                                AssetsUtils.readString("expected/RequireOnlyMainFragmentArguments.expected"))
+                );
     }
 
     @Test

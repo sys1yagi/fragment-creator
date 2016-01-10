@@ -1,0 +1,33 @@
+package com.sys1yagi.fragmentcreator.fragment;
+
+import android.os.Bundle;
+import com.sys1yagi.fragmentcreator.Arguments;
+import java.lang.String;
+
+public final class MainFragmentArguments extends Arguments {
+
+    private final String keyword;
+
+    private final String userId;
+
+    public MainFragmentArguments(Bundle args){
+        super(args);
+
+        keyword = args.getString("keyword");
+        userId = args.getString("userId");
+        checkRequired();
+    }
+
+    public void checkRequired() {
+        checkRequire(keyword, "keyword");
+        checkRequire(userId, "userId");
+    }
+
+    public String getKeyword(){
+        return keyword;
+    }
+
+    public String getUserId(){
+        return userId;
+    }
+}

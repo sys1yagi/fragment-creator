@@ -42,11 +42,21 @@ public class FragmentCreatorProcessor extends AbstractProcessor {
         try {
             List<FragmentCreatorModel> models = EnvParser.parse(env, elementUtils);
             for (FragmentCreatorModel model : models) {
-                FragmentCreatorWriter writer = new FragmentCreatorWriter(model);
-                try {
-                    writer.write(filer);
-                } catch (IOException e) {
-                    messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                {
+                    FragmentCreatorWriter writer = new FragmentCreatorWriter(model);
+                    try {
+                        writer.write(filer);
+                    } catch (IOException e) {
+                        messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                    }
+                }
+                {
+                    FragmentArgumentsWriter writer = new FragmentArgumentsWriter(model);
+                    try {
+                        writer.write(filer);
+                    } catch (IOException e) {
+                        messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                    }
                 }
             }
         } catch (IllegalTypeException e) {

@@ -133,9 +133,9 @@ public class FragmentCreatorWriter {
     //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
 
     void generatePutMethodCall(MethodSpec.Builder builder, VariableElement param) {
+        //TODO check require
         String key = param.getSimpleName().toString();
         String format = null;
-        System.out.println(param.asType().toString());
 
         switch (param.asType().toString()) {
             case "java.lang.String":
