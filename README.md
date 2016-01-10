@@ -1,5 +1,7 @@
 # Fragment Creator
 
+[![Circle CI](https://circleci.com/gh/sys1yagi/fragment-creator.svg?style=svg)](https://circleci.com/gh/sys1yagi/fragment-creator)
+
 Fragment Creator is a code generation library to manage fragment class creation and arguments for Android.
 
 I wrote the newInstance method every time when declaring the new Fragment. Then, call `Fragment#getArguments()` and call a get method that is adapted parameter type (ex. getString(), getParcelable()). It's so a boring boilerplate code.
