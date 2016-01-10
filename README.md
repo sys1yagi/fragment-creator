@@ -2,7 +2,7 @@
 
 Fragment Creator is a code generation library to manage fragment class creation and arguments for Android.
 
-I write newInstance method on Fragment. Then, call Fragment#getArguments() and call a get method that is adapted parameter type (ex getString(), getParcelable()). It's so a boring boilerplate code.
+I wrote the newInstance method every time when declaring the new Fragment. Then, call `Fragment#getArguments()` and call a get method that is adapted parameter type (ex. getString(), getParcelable()). It's so a boring boilerplate code.
 
 This library helps you to manage fragment class creation and arguments. 
 
