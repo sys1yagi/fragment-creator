@@ -21,7 +21,7 @@ test:
     # build the project
     - ./gradlew sample:assembleDebug
     # run test
-    - ./gradlew processor:testDebugUnitTest
+    - ./gradlew test
     # run lint
     - ./gradlew lint
     # run robolectric tests - disabled for now
