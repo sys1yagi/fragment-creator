@@ -36,10 +36,22 @@ MainFragment instance = MainFragmentCreator.newInstance("keyword", "user_id");
 ### Read the arguments with the ArgumentsReader
 
 ```java
-MainFragmentArguments arguments = MainFragmentArguments(getArguments());
-
-String keyword = arguments.getKeyword();
-String userId = arguments.getUserId();
+public MainFragment extends Fragment {
+    
+    @Args
+    String keyword;
+    
+    @Args(require = false)
+    String userId;
+    
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        MainFragmentArguments.read(this);
+             
+        // this.keyword, this.userId are initialized.
+    }
+}
 ```
 
 ### Supported types
@@ -83,8 +95,8 @@ String userId = arguments.getUserId();
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.0.3'
-compile 'com.github.sys1yagi.fragment-creator:library:0.0.3'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.1.0'
+compile 'com.github.sys1yagi.fragment-creator:library:0.1.0'
 ```
 
 ## Development

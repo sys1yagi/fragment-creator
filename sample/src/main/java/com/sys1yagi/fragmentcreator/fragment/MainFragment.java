@@ -21,12 +21,10 @@ public class MainFragment extends Fragment {
     @Args(require = false)
     String userId;
 
-    MainFragmentArguments arguments;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        arguments = new MainFragmentArguments(getArguments());
+        MainFragmentArguments.read(this);
     }
 
     @Nullable
@@ -39,7 +37,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((TextView) view.findViewById(R.id.keyword)).setText(arguments.getKeyword());
-        ((TextView) view.findViewById(R.id.user_id)).setText(arguments.getUserId());
+        ((TextView) view.findViewById(R.id.keyword)).setText(keyword);
+        ((TextView) view.findViewById(R.id.user_id)).setText(userId);
     }
 }
