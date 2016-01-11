@@ -29,4 +29,36 @@ public final class MainFragmentCreator extends FragmentCreator {
 
         return fragment;
     }
+
+    public static void read(MainFragment fragment) {
+        Bundle args = fragment.getArguments();
+        fragment.keyword = args.getString("keyword");
+        fragment.flag = args.getBoolean("flag");
+        fragment.aByte = args.getByte("aByte");
+        fragment.aChar = args.getChar("aChar");
+        fragment.aShort = args.getShort("aShort");
+        fragment.anInt = args.getInt("anInt");
+        fragment.aLong = args.getLong("aLong");
+        fragment.aFloat = args.getFloat("aFloat");
+        fragment.aDouble = args.getDouble("aDouble");
+        fragment.charSequence = args.getCharSequence("charSequence");
+        fragment.parcelable = args.getParcelable("parcelable");
+        fragment.serializable = args.getSerializable("serializable");
+        checkRequired(fragment);
+    }
+
+    public static void checkRequired(MainFragment fragment) {
+        FragmentCreator.checkRequire(fragment.keyword, "keyword");
+        FragmentCreator.checkRequire(fragment.flag, "flag");
+        FragmentCreator.checkRequire(fragment.aByte, "aByte");
+        FragmentCreator.checkRequire(fragment.aChar, "aChar");
+        FragmentCreator.checkRequire(fragment.aShort, "aShort");
+        FragmentCreator.checkRequire(fragment.anInt, "anInt");
+        FragmentCreator.checkRequire(fragment.aLong, "aLong");
+        FragmentCreator.checkRequire(fragment.aFloat, "aFloat");
+        FragmentCreator.checkRequire(fragment.aDouble, "aDouble");
+        FragmentCreator.checkRequire(fragment.charSequence, "charSequence");
+        FragmentCreator.checkRequire(fragment.parcelable, "parcelable");
+        FragmentCreator.checkRequire(fragment.serializable, "serializable");
+    }
 }

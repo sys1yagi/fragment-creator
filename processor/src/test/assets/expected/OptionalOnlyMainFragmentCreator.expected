@@ -34,4 +34,13 @@ public final class MainFragmentCreator extends FragmentCreator {
         fragment.setArguments(args);
         return fragment;
     }
+    public static void read(MainFragment fragment) {
+        Bundle args = fragment.getArguments();
+        fragment.keyword = args.getString("keyword");
+        fragment.userId = args.getString("userId");
+        checkRequired(fragment);
+    }
+
+    public static void checkRequired(MainFragment fragment) {
+    }
 }

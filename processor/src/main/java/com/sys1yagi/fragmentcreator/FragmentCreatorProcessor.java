@@ -50,14 +50,6 @@ public class FragmentCreatorProcessor extends AbstractProcessor {
                         messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                     }
                 }
-                {
-                    FragmentArgumentsWriter writer = new FragmentArgumentsWriter(model);
-                    try {
-                        writer.write(filer);
-                    } catch (IOException e) {
-                        messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-                    }
-                }
             }
         } catch (IllegalTypeException e) {
             error(e.getMessage());

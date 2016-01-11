@@ -16,4 +16,16 @@ public final class MainFragmentCreator extends FragmentCreator {
 
         return fragment;
     }
+
+    public static void read(MainFragment fragment){
+            Bundle args = fragment.getArguments();
+            fragment.keyword = args.getString("keyword");
+            fragment.userId = args.getString("userId");
+            checkRequired(fragment);
+    }
+
+    public static void checkRequired(MainFragment fragment) {
+        FragmentCreator.checkRequire(fragment.keyword, "keyword");
+        FragmentCreator.checkRequire(fragment.userId, "userId");
+    }
 }
