@@ -87,10 +87,14 @@ public class FragmentCreatorWriter {
         //TODO Support duplication of combination
         if (params.size() == 1) {
             return NEW_INSTANCE + "With" +
-                    params.stream().findFirst().map(param -> param.getSimpleName().toString()).get();
+                    params.stream().findFirst().map(param -> camelCase(param.getSimpleName().toString())).get();
         } else {
             return NEW_INSTANCE;
         }
+    }
+
+    static String camelCase(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     MethodSpec createNewInstance(TypeElement typeElement, List<VariableElement> params) {

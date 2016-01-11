@@ -10,7 +10,7 @@ public final class MainFragmentCreator extends FragmentCreator {
         return new MainFragment();
     }
 
-    public static MainFragment newInstanceWithkeyword(String keyword) {
+    public static MainFragment newInstanceWithKeyword(String keyword) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
         args.putString("keyword", keyword);
@@ -18,7 +18,7 @@ public final class MainFragmentCreator extends FragmentCreator {
         return fragment;
     }
 
-    public static MainFragment newInstanceWithuserId(String userId) {
+    public static MainFragment newInstanceWithUserId(String userId) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
         args.putString("userId", userId);
