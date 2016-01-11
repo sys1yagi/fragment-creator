@@ -24,7 +24,7 @@ public class MainFragment extends Fragment {
 }
 ```
 
-Then, MainFragmentCreator and MainFragmentArguments is generated.
+Then, MainFragmentCreator is generated.
 
 ### Create fragment with the FragmentCreator
 
@@ -33,7 +33,7 @@ MainFragment instance = MainFragmentCreator.newInstanceWithKeyword("keyword");
 MainFragment instance = MainFragmentCreator.newInstance("keyword", "user_id");
 ```
 
-### Read the arguments with the ArgumentsReader
+### Read the arguments with the FragmentCreator
 
 ```java
 public MainFragment extends Fragment {
@@ -47,7 +47,7 @@ public MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MainFragmentArguments.read(this);
+        MainFragmentCreator.read(this);
 
         // this.keyword, this.userId are initialized.
     }
@@ -95,8 +95,8 @@ public MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.1.0'
-compile 'com.github.sys1yagi.fragment-creator:library:0.1.0'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.2.0'
+compile 'com.github.sys1yagi.fragment-creator:library:0.2.0'
 ```
 
 ## Development
