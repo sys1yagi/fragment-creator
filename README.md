@@ -72,23 +72,23 @@ public MainFragment extends Fragment {
 
 ### Not supported yet
 
-- android.os.Parcelable[]
-- java.util.ArrayList<? extends android.os.Parcelable>
-- android.util.SparseArray<? extends android.os.Parcelable>
-- java.util.ArrayList<java.lang.Integer>
-- java.util.ArrayList<java.lang.String>
-- java.util.ArrayList<java.lang.CharSequence>
-- boolean[]
-- byte[]
-- short[]
-- char[]
-- int[]
-- long[]
-- float[]
-- double[]
-- java.lang.String[]
-- java.lang.CharSequence[]
-- android.os.Bundle
+- `android.os.Parcelable[]`
+- `java.util.ArrayList<? extends android.os.Parcelable>`
+- `android.util.SparseArray<? extends android.os.Parcelable>`
+- `java.util.ArrayList<java.lang.Integer>`
+- `java.util.ArrayList<java.lang.String>`
+- `java.util.ArrayList<java.lang.CharSequence>`
+- `boolean[]`
+- `byte[]`
+- `short[]`
+- `char[]`
+- `int[]`
+- `long[]`
+- `float[]`
+- `double[]`
+- `java.lang.String[]`
+- `java.lang.CharSequence[]`
+- `android.os.Bundle`
 
 ### Installation
 
