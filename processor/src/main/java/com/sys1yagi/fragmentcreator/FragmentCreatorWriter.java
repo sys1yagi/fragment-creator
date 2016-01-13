@@ -1,6 +1,7 @@
 package com.sys1yagi.fragmentcreator;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
@@ -37,87 +39,125 @@ public class FragmentCreatorWriter {
         classBuilder.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
         ClassName superClassName = ClassName.get(FragmentCreator.class);
         classBuilder.superclass(superClassName);
+        classBuilder.addType(createBuilderClass(model));
 
         List<MethodSpec> methodSpecs = new ArrayList<>();
-        methodSpecs.addAll(createMethods(model.getElement(), model.getArgsList()));
         methodSpecs.add(createReadMethod(model));
         methodSpecs.add(createCheckRequired(model));
-
         classBuilder.addMethods(methodSpecs);
 
         TypeSpec outClass = classBuilder.build();
-
         JavaFile.builder(model.getPackageName(), outClass)
                 .build()
                 .writeTo(filer);
     }
 
-    @SuppressWarnings("unchecked")
-    private List<MethodSpec> createMethods(TypeElement typeElement, List<VariableElement> argsList) {
-        List<MethodSpec> methodSpecs = new ArrayList<>();
+    private TypeSpec createBuilderClass(FragmentCreatorModel model) {
+        TypeSpec.Builder classBuilder = TypeSpec.classBuilder("Builder");
+        classBuilder.addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
 
-        List<VariableElement> required = argsList.stream()
-                .filter(element -> element.getAnnotation(Args.class).require())
-                .collect(Collectors.toList());
-        List<VariableElement> optional = argsList.stream()
-                .filter(element -> !element.getAnnotation(Args.class).require())
-                .collect(Collectors.toList());
+        classBuilder.addFields(createBuilderFields(model.getArgsList()));
+        classBuilder.addMethod(createBuilderConstructor());
+        classBuilder.addMethod(createBuilderNewInstance(getBuilderTypeName(model), model.getArgsList()));
+        classBuilder.addMethods(createBuilderSetterMethods(getBuilderTypeName(model), model.getArgsList()));
+        classBuilder.addMethod(createBuildMethod(model.getElement(), model.getArgsList()));
 
-        if (required.isEmpty()) {
-            methodSpecs.add(createDefaultNewInstance(typeElement));
-        }
-
-        methodSpecs.addAll(extractParameterPattern(required, optional).stream()
-                .map(params -> createNewInstance(typeElement, params)).collect(Collectors.toList()));
-
-        return methodSpecs;
+        return classBuilder.build();
     }
 
-    MethodSpec createDefaultNewInstance(TypeElement typeElement) {
-        TypeName typeName = ClassName.get(typeElement.asType());
+    TypeName getBuilderTypeName(FragmentCreatorModel model) {
+        return ClassName.get(model.getPackageName() + "." + model.getCreatorClassName(), "Builder");
+    }
 
-        return MethodSpec.methodBuilder(NEW_INSTANCE)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(typeName)
-                .addStatement("return new $T()", typeName)
+    private List<FieldSpec> createBuilderFields(List<VariableElement> argsList) {
+        return argsList.stream().map(args ->
+                FieldSpec.builder(ClassName.get(args.asType()), args.getSimpleName().toString()).build()
+        ).collect(Collectors.toList());
+    }
+
+    private MethodSpec createBuilderConstructor() {
+        return MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PRIVATE)
                 .build();
     }
 
-    String buildMethodName(List<VariableElement> params) {
-        //TODO Support duplication of combination
-        if (params.size() == 1) {
-            return NEW_INSTANCE + "With" +
-                    params.stream().findFirst().map(param -> camelCase(param.getSimpleName().toString())).get();
-        } else {
-            return NEW_INSTANCE;
-        }
+    private MethodSpec createBuilderNewInstance(TypeName builderTypeName, List<VariableElement> argsList) {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(NEW_INSTANCE)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(builderTypeName);
+        builder.addStatement("Builder builder = new Builder()");
+        argsList.stream()
+                .filter(element -> element.getAnnotation(Args.class).require())
+                .forEach(args -> {
+                    Name name = args.getSimpleName();
+                    builder.addParameter(ClassName.get(args.asType()), name.toString());
+                    builder.addStatement("builder.$N = $N", name, name);
+                });
+        builder.addStatement("return builder");
+        return builder.build();
     }
 
-    static String camelCase(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    private List<MethodSpec> createBuilderSetterMethods(TypeName builderTypeName, List<VariableElement> argsList) {
+        return argsList.stream()
+                .filter(element -> !element.getAnnotation(Args.class).require())
+                .map(args -> {
+                    TypeName typeName = ClassName.get(args.asType());
+                    Name name = args.getSimpleName();
+                    String nameString = name.toString();
+                    return MethodSpec.methodBuilder("set" + camelCase(nameString))
+                            .addParameter(typeName, nameString)
+                            .returns(builderTypeName)
+                            .addModifiers(Modifier.PUBLIC)
+                            .addStatement("this.$N = $N", name, name)
+                            .addStatement("return this")
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
-    MethodSpec createNewInstance(TypeElement typeElement, List<VariableElement> params) {
+    private MethodSpec createBuildMethod(TypeElement typeElement, List<VariableElement> argsList) {
         TypeName typeName = ClassName.get(typeElement.asType());
 
-        MethodSpec.Builder builder = MethodSpec.methodBuilder(buildMethodName(params));
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("build");
 
-        builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(typeName);
+        builder.addModifiers(Modifier.PUBLIC).returns(typeName);
         builder.addStatement("$T fragment = new $T()", typeName, typeName);
 
         builder.addStatement("$T args = new $T()", ClassName.get(Bundle.class), ClassName.get(Bundle.class));
 
-        params.forEach(param -> {
-            builder.addParameter(ClassName.get(param.asType()), param.getSimpleName().toString());
-            generatePutMethodCall(builder, param);
-        });
+        argsList.forEach(param -> generatePutMethodCall(builder, param));
 
         builder.addStatement("fragment.setArguments(args)");
         builder.addStatement("return fragment");
 
         return builder.build();
     }
+
+    static String camelCase(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+//    MethodSpec createNewInstance(TypeElement typeElement, List<VariableElement> params) {
+//        TypeName typeName = ClassName.get(typeElement.asType());
+//
+//        MethodSpec.Builder builder = MethodSpec.methodBuilder(buildMethodName(params));
+//
+//        builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+//                .returns(typeName);
+//        builder.addStatement("$T fragment = new $T()", typeName, typeName);
+//
+//        builder.addStatement("$T args = new $T()", ClassName.get(Bundle.class), ClassName.get(Bundle.class));
+//
+//        params.forEach(param -> {
+//            builder.addParameter(ClassName.get(param.asType()), param.getSimpleName().toString());
+//            generatePutMethodCall(builder, param);
+//        });
+//
+//        builder.addStatement("fragment.setArguments(args)");
+//        builder.addStatement("return fragment");
+//
+//        return builder.build();
+//    }
 
     // TODO
     //    public  void putParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }

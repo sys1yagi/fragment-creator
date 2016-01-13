@@ -5,18 +5,6 @@ import com.sys1yagi.fragmentcreator.FragmentCreator;
 import java.lang.String;
 
 public final class MainFragmentCreator extends FragmentCreator {
-
-    public static MainFragment newInstance(String keyword, String userId) {
-        MainFragment fragment = new MainFragment();
-
-        Bundle args = new Bundle();
-        args.putString("keyword", keyword);
-        args.putString("userId", userId);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
-
     public static void read(MainFragment fragment){
             Bundle args = fragment.getArguments();
             fragment.keyword = args.getString("keyword");
@@ -28,4 +16,32 @@ public final class MainFragmentCreator extends FragmentCreator {
         FragmentCreator.checkRequire(fragment.keyword, "keyword");
         FragmentCreator.checkRequire(fragment.userId, "userId");
     }
+
+    public static final class Builder {
+        String keyword;
+
+        String userId;
+
+        private Builder() {
+        }
+
+        public static Builder newInstance(String keyword, String userId) {
+            Builder builder =  new Builder();
+            builder.keyword = keyword;
+            builder.userId = userId;
+            return builder;
+        }
+
+        public MainFragment build(){
+            MainFragment fragment = new MainFragment();
+
+            Bundle args = new Bundle();
+            args.putString("keyword", keyword);
+            args.putString("userId", userId);
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+    }
+
 }

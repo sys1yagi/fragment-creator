@@ -20,8 +20,6 @@ public class FragmentCreatorModel {
 
     private String creatorClassName;
 
-    private String argumentsClassName;
-
     private List<VariableElement> argsList = new ArrayList<>();
 
     public FragmentCreatorModel(TypeElement element, Elements elementUtils) {
@@ -29,7 +27,6 @@ public class FragmentCreatorModel {
         this.packageName = getPackageName(elementUtils, element);
         this.originalClassName = getClassName(element, packageName);
         this.creatorClassName = originalClassName.concat("Creator");
-        this.argumentsClassName = originalClassName.concat("Arguments");
         findAnnotations(element);
     }
 
@@ -67,10 +64,6 @@ public class FragmentCreatorModel {
 
     public String getCreatorClassName() {
         return creatorClassName;
-    }
-
-    public String getArgumentsClassName() {
-        return argumentsClassName;
     }
 
     public List<VariableElement> getArgsList() {
