@@ -8,7 +8,6 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.exception.UnsupportedTypeException;
-import com.sys1yagi.fragmentcreator.util.Combinations;
 
 import android.os.Bundle;
 
@@ -22,6 +21,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 
 public class FragmentCreatorWriter {
 
@@ -156,84 +157,69 @@ public class FragmentCreatorWriter {
     //    public  void putCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
     //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
 
-    void generatePutMethodCall(MethodSpec.Builder builder, VariableElement param) {
-        //TODO check require
-        String key = param.getSimpleName().toString();
-        String format = null;
-
-        switch (param.asType().toString()) {
+    String extractPutMethod(TypeMirror typeMirror) {
+        switch (typeMirror.toString()) {
+            case "java.lang.Object":
+                return null;
             case "java.lang.String":
-                format = "args.putString($S, $N)";
-                break;
+                return "args.putString($S, $N)";
             case "boolean":
             case "java.lang.Boolean":
-                format = "args.putBoolean($S, $N)";
-                break;
+                return "args.putBoolean($S, $N)";
             case "byte":
             case "java.lang.Byte":
-                format = "args.putByte($S, $N)";
-                break;
+                return "args.putByte($S, $N)";
             case "char":
             case "java.lang.Character":
-                format = "args.putChar($S, $N)";
-                break;
+                return "args.putChar($S, $N)";
             case "short":
             case "java.lang.Short":
-                format = "args.putShort($S, $N)";
-                break;
+                return "args.putShort($S, $N)";
             case "int":
             case "java.lang.Integer":
-                format = "args.putInt($S, $N)";
-                break;
+                return "args.putInt($S, $N)";
             case "long":
             case "java.lang.Long":
-                format = "args.putLong($S, $N)";
-                break;
+                return "args.putLong($S, $N)";
             case "float":
             case "java.lang.Float":
-                format = "args.putFloat($S, $N)";
-                break;
+                return "args.putFloat($S, $N)";
             case "double":
             case "java.lang.Double":
-                format = "args.putDouble($S, $N)";
-                break;
+                return "args.putDouble($S, $N)";
             case "java.lang.CharSequence":
-                format = "args.putCharSequence($S, $N)";
-                break;
+                return "args.putCharSequence($S, $N)";
             case "android.os.Parcelable":
-                format = "args.putParcelable($S, $N)";
-                break;
+                return "args.putParcelable($S, $N)";
             case "java.io.Serializable":
-                format = "args.putSerializable($S, $N)";
-                break;
+                return "args.putSerializable($S, $N)";
             default:
-                //TODO extract base type
+                DeclaredType declaredType = (DeclaredType) typeMirror;
+                TypeElement typeElement = (TypeElement) declaredType.asElement();
+                String format = extractPutMethod(typeElement.getSuperclass());
+                if (format != null) {
+                    return format;
+                }
+                return typeElement.getInterfaces().stream()
+                        .map(this::extractPutMethod)
+                        .filter(f -> f != null)
+                        .findFirst().get();
         }
+    }
 
-        if (format == null || "".equals(format)) {
+    void generatePutMethodCall(MethodSpec.Builder builder, VariableElement param) {
+        String key = param.getSimpleName().toString();
+
+        String format = extractPutMethod(param.asType());
+
+        if (format == null) {
             throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
         }
 
         builder.addStatement(format, key, param.getSimpleName());
     }
 
-    List<List<VariableElement>> createPattern(List<VariableElement> seed, List<VariableElement> material,
-            int slotSize) {
-        List<List<VariableElement>> patterns = new ArrayList<>();
-
-        Combinations<VariableElement> combinations = new Combinations<>(
-                material.toArray(new VariableElement[material.size()]), slotSize);
-
-        while (combinations.hasNext()) {
-            List<VariableElement> params = new ArrayList<>(seed);
-            List<VariableElement> combination = combinations.next();
-            params.addAll(combination);
-            patterns.add(params);
-        }
-        return patterns;
-    }
-
-    private static MethodSpec createReadMethod(FragmentCreatorModel model) {
+    private MethodSpec createReadMethod(FragmentCreatorModel model) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("read")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(ClassName.get(model.getElement()), "fragment");
@@ -266,73 +252,80 @@ public class FragmentCreatorWriter {
     //    public  void putStringArray(java.lang.String key, java.lang.String[] value) { throw new RuntimeException("Stub!"); }
     //    public  void putCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
     //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
-    private static void createParameterInitializeStatement(MethodSpec.Builder builder,
-            List<VariableElement> params) {
 
+    String extractParameterInitializeStatement(TypeMirror typeMirror) {
+
+        System.out.println("set : " + typeMirror.toString());
+
+        switch (typeMirror.toString()) {
+            case "java.lang.Object":
+                return "";
+            case "java.lang.String":
+                return "args.getString($S)";
+            case "boolean":
+            case "java.lang.Boolean":
+                return "args.getBoolean($S)";
+            case "byte":
+            case "java.lang.Byte":
+                return "args.getByte($S)";
+            case "char":
+            case "java.lang.Character":
+                return "args.getChar($S)";
+            case "short":
+            case "java.lang.Short":
+                return "args.getShort($S)";
+            case "int":
+            case "java.lang.Integer":
+                return "args.getInt($S)";
+            case "long":
+            case "java.lang.Long":
+                return "args.getLong($S)";
+            case "float":
+            case "java.lang.Float":
+                return "args.getFloat($S)";
+            case "double":
+            case "java.lang.Double":
+                return "args.getDouble($S)";
+            case "java.lang.CharSequence":
+                return "args.getCharSequence($S)";
+            case "android.os.Parcelable":
+                return "args.getParcelable($S)";
+            case "java.io.Serializable":
+                return "($T)args.getSerializable($S)";
+            default:
+                DeclaredType declaredType = (DeclaredType) typeMirror;
+                TypeElement typeElement = (TypeElement) declaredType.asElement();
+                String format = extractParameterInitializeStatement(typeElement.getSuperclass());
+                if (!"".equals(format)) {
+                    return format;
+                }
+                return typeElement.getInterfaces().stream()
+                        .map(this::extractParameterInitializeStatement)
+                        .filter(f -> f != null)
+                        .findFirst().get();
+        }
+    }
+
+    private void createParameterInitializeStatement(MethodSpec.Builder builder,
+            List<VariableElement> params) {
         params.forEach(param -> {
-            //TODO check require
             String key = param.getSimpleName().toString();
             String prefix = "fragment.$N = ";
-            String format = prefix;
-
-            switch (param.asType().toString()) {
-                case "java.lang.String":
-                    format += "args.getString($S)";
-                    break;
-                case "boolean":
-                case "java.lang.Boolean":
-                    format += "args.getBoolean($S)";
-                    break;
-                case "byte":
-                case "java.lang.Byte":
-                    format += "args.getByte($S)";
-                    break;
-                case "char":
-                case "java.lang.Character":
-                    format += "args.getChar($S)";
-                    break;
-                case "short":
-                case "java.lang.Short":
-                    format += "args.getShort($S)";
-                    break;
-                case "int":
-                case "java.lang.Integer":
-                    format += "args.getInt($S)";
-                    break;
-                case "long":
-                case "java.lang.Long":
-                    format += "args.getLong($S)";
-                    break;
-                case "float":
-                case "java.lang.Float":
-                    format += "args.getFloat($S)";
-                    break;
-                case "double":
-                case "java.lang.Double":
-                    format += "args.getDouble($S)";
-                    break;
-                case "java.lang.CharSequence":
-                    format += "args.getCharSequence($S)";
-                    break;
-                case "android.os.Parcelable":
-                    format += "args.getParcelable($S)";
-                    break;
-                case "java.io.Serializable":
-                    format += "args.getSerializable($S)";
-                    break;
-                default:
-                    //TODO extract base type
-            }
+            String format = prefix + extractParameterInitializeStatement(param.asType());
 
             if (prefix.equals(format)) {
                 throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
             }
 
-            builder.addStatement(format, key, key);
+            if (format.contains("$T")) {
+                builder.addStatement(format, key, ClassName.get(param.asType()), key);
+            } else {
+                builder.addStatement(format, key, key);
+            }
         });
     }
 
-    private static MethodSpec createCheckRequired(FragmentCreatorModel model) {
+    private MethodSpec createCheckRequired(FragmentCreatorModel model) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("checkRequired")
                 .addParameter(ClassName.get(model.getElement()), "fragment")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)

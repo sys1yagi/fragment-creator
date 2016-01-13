@@ -114,7 +114,24 @@ public class FragmentCreatorProcessorTest {
     }
 
     //TODO complex pattern
-    
+    @Test
+    public void complexPattern() throws Exception {
+        String javaFile = AssetsUtils.readString("ComplexSerializableMainFragment.java");
+
+        JavaFileObject exampleFragment = JavaFileObjects
+                .forSourceString("MainFragment", javaFile);
+
+        assert_().about(javaSource())
+                .that(exampleFragment)
+                .processedWith(new FragmentCreatorProcessor())
+                .compilesWithoutError()
+                .and()
+                .generatesSources(JavaFileObjects
+                        .forSourceString("MainFragmentCreator",
+                                AssetsUtils.readString("expected/ComplexSerializableMainFragmentCreator.expected")));
+
+    }
+
     //TODO unsupported parameter
 
 }

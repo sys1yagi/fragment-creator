@@ -10,22 +10,23 @@ import java.io.Serializable;
 @FragmentCreator
 public class MainFragment extends Fragment {
 
-    public static class Param implements Serializable {
+    interface A {
 
     }
 
-    @Args
-    String keyword;
+    interface B {
 
-    @Args
-    String userId;
+    }
+
+    public static class Param implements Serializable, B {
+
+    }
+
+    public static class Param2 extends Param implements A {
+
+    }
 
     @Args(require = false)
-    int recipeId;
+    Param2 param;
 
-    @Args(require = false)
-    Param param;
-
-    @Args(require = false)
-    boolean isEdit;
 }

@@ -21,7 +21,7 @@ public final class MainFragmentCreator extends FragmentCreator {
     fragment.aDouble = args.getDouble("aDouble");
     fragment.charSequence = args.getCharSequence("charSequence");
     fragment.parcelable = args.getParcelable("parcelable");
-    fragment.serializable = args.getSerializable("serializable");
+    fragment.serializable = (Serializable)args.getSerializable("serializable");
     checkRequired(fragment);
   }
 

@@ -1,0 +1,44 @@
+package com.sys1yagi.fragmentcreator.fragment;
+
+import android.os.Bundle;
+import com.sys1yagi.fragmentcreator.FragmentCreator;
+
+public final class MainFragmentCreator extends FragmentCreator {
+    public static void read(MainFragment fragment){
+            Bundle args = fragment.getArguments();
+            fragment.param = (MainFragment.Param2)args.getSerializable("param");
+            checkRequired(fragment);
+    }
+
+    public static void checkRequired(MainFragment fragment) {
+
+    }
+
+    public static final class Builder {
+        MainFragment.Param2 param;
+
+        private Builder() {
+        }
+
+        public static Builder newInstance() {
+            Builder builder =  new Builder();
+            return builder;
+        }
+
+        public Builder setParam(MainFragment.Param2 param){
+          this.param = param;
+          return this;
+        }
+
+        public MainFragment build(){
+            MainFragment fragment = new MainFragment();
+
+            Bundle args = new Bundle();
+            args.putSerializable("param", param);
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+    }
+
+}
