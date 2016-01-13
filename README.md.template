@@ -29,8 +29,14 @@ Then, MainFragmentCreator is generated.
 ### Create fragment with the FragmentCreator
 
 ```java
-MainFragment instance = MainFragmentCreator.newInstanceWithKeyword("keyword");
-MainFragment instance = MainFragmentCreator.newInstance("keyword", "user_id");
+MainFragment instance = MainFragmentCreator.Builder
+                            .newInstance("keyword")
+                            .build();
+
+MainFragment instance = MainFragmentCreator
+                            .newInstance("keyword") // required
+                            .setUserId("mike")      // optional
+                            .build();
 ```
 
 ### Read the arguments with the FragmentCreator

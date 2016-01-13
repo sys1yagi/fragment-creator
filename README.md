@@ -29,8 +29,14 @@ Then, MainFragmentCreator is generated.
 ### Create fragment with the FragmentCreator
 
 ```java
-MainFragment instance = MainFragmentCreator.newInstanceWithKeyword("keyword");
-MainFragment instance = MainFragmentCreator.newInstance("keyword", "user_id");
+MainFragment instance = MainFragmentCreator.Builder
+                            .newInstance("keyword")
+                            .build();
+
+MainFragment instance = MainFragmentCreator
+                            .newInstance("keyword") // required
+                            .setUserId("mike")      // optional
+                            .build();
 ```
 
 ### Read the arguments with the FragmentCreator
@@ -95,8 +101,8 @@ public MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.3.0'
-compile 'com.github.sys1yagi.fragment-creator:library:0.3.0'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.4.0'
+compile 'com.github.sys1yagi.fragment-creator:library:0.4.0'
 ```
 
 ## Development

@@ -14,7 +14,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, MainFragmentCreator.newInstance("Hello FragmentCreator!", "mike"))
+                    .add(R.id.container,
+                            MainFragmentCreator.Builder
+                                    .newInstance("Hello FragmentCreator!")
+                                    .setUserId("mike")
+                                    .build())
                     .commit();
         }
     }
