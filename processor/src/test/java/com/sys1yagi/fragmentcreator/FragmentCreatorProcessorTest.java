@@ -114,9 +114,7 @@ public class FragmentCreatorProcessorTest {
     }
 
     //TODO complex pattern
-
-    //TODO duplication pattern
-
+    
     //TODO unsupported parameter
 
 }

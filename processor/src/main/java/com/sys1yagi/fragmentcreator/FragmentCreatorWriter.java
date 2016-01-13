@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -137,28 +136,6 @@ public class FragmentCreatorWriter {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-//    MethodSpec createNewInstance(TypeElement typeElement, List<VariableElement> params) {
-//        TypeName typeName = ClassName.get(typeElement.asType());
-//
-//        MethodSpec.Builder builder = MethodSpec.methodBuilder(buildMethodName(params));
-//
-//        builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-//                .returns(typeName);
-//        builder.addStatement("$T fragment = new $T()", typeName, typeName);
-//
-//        builder.addStatement("$T args = new $T()", ClassName.get(Bundle.class), ClassName.get(Bundle.class));
-//
-//        params.forEach(param -> {
-//            builder.addParameter(ClassName.get(param.asType()), param.getSimpleName().toString());
-//            generatePutMethodCall(builder, param);
-//        });
-//
-//        builder.addStatement("fragment.setArguments(args)");
-//        builder.addStatement("return fragment");
-//
-//        return builder.build();
-//    }
-
     // TODO
     //    public  void putParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }
     //    public  void putParcelableArrayList(java.lang.String key, java.util.ArrayList<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
@@ -238,22 +215,6 @@ public class FragmentCreatorWriter {
         }
 
         builder.addStatement(format, key, param.getSimpleName());
-    }
-
-    List<List<VariableElement>> extractParameterPattern(List<VariableElement> required,
-            List<VariableElement> optional) {
-        List<List<VariableElement>> patterns = new ArrayList<>();
-
-        if (!required.isEmpty()) {
-            patterns.add(required);
-        }
-
-        int optionalCount = optional.size();
-        Stream.iterate(1, i -> i + 1)
-                .limit(optionalCount)
-                .forEach(i -> patterns.addAll(createPattern(required, optional, i)));
-
-        return patterns;
     }
 
     List<List<VariableElement>> createPattern(List<VariableElement> seed, List<VariableElement> material,
