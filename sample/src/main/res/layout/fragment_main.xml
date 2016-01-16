@@ -17,4 +17,10 @@
             android:layout_height="wrap_content"
             tools:text="user_id"
     />
+    <TextView
+            android:id="@+id/shop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="10 Yes"
+    />
 </LinearLayout>

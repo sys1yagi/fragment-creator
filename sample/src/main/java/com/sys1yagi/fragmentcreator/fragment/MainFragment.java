@@ -3,6 +3,8 @@ package com.sys1yagi.fragmentcreator.fragment;
 import com.sys1yagi.fragmentcreator.R;
 import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
+import com.sys1yagi.fragmentcreator.log.Logger;
+import com.sys1yagi.fragmentcreator.model.Shop;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +22,12 @@ public class MainFragment extends Fragment {
 
     @Args(require = false)
     String userId;
+
+    @Args
+    Shop shop;
+
+    @Args(require = false)
+    Logger logger;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,5 +47,6 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ((TextView) view.findViewById(R.id.keyword)).setText(keyword);
         ((TextView) view.findViewById(R.id.user_id)).setText(userId);
+        ((TextView) view.findViewById(R.id.shop)).setText(shop.getId() + " " + shop.getName());
     }
 }

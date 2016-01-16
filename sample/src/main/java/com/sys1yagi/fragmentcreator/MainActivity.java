@@ -1,6 +1,7 @@
 package com.sys1yagi.fragmentcreator;
 
 import com.sys1yagi.fragmentcreator.fragment.MainFragmentCreator;
+import com.sys1yagi.fragmentcreator.model.Shop;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container,
                             MainFragmentCreator.Builder
-                                    .newInstance("Hello FragmentCreator!")
+                                    .newInstance("Hello FragmentCreator!", new Shop(10, "Yes"))
                                     .setUserId("mike")
                                     .build())
                     .commit();
