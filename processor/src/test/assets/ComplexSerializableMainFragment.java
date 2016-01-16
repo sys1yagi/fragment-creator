@@ -18,6 +18,10 @@ public class MainFragment extends Fragment {
 
     }
 
+    interface C extends Serializable {
+
+    }
+
     public static class Param implements Serializable, B {
 
     }
@@ -28,5 +32,8 @@ public class MainFragment extends Fragment {
 
     @Args(require = false)
     Param2 param;
+
+    @Args(require = false)
+    C c;
 
 }

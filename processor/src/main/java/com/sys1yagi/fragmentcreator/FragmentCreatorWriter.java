@@ -197,14 +197,18 @@ public class FragmentCreatorWriter {
                 return "args.putSerializable($S, $N)";
             default:
                 TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
-                String format = extractPutMethod(typeElement.getSuperclass());
-                if (format != null) {
-                    return format;
+                if (typeElement != null) {
+                    String format = extractPutMethod(typeElement.getSuperclass());
+                    if (format != null) {
+                        return format;
+                    }
+                    return typeElement.getInterfaces().stream()
+                            .map(this::extractPutMethod)
+                            .filter(f -> f != null)
+                            .findFirst().get();
+
                 }
-                return typeElement.getInterfaces().stream()
-                        .map(this::extractPutMethod)
-                        .filter(f -> f != null)
-                        .findFirst().get();
+                return null;
         }
     }
 
@@ -291,14 +295,17 @@ public class FragmentCreatorWriter {
                 return "($T)args.getSerializable($S)";
             default:
                 TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
-                String format = extractParameterInitializeStatement(typeElement.getSuperclass());
-                if (!"".equals(format)) {
-                    return format;
+                if (typeElement != null) {
+                    String format = extractParameterInitializeStatement(typeElement.getSuperclass());
+                    if (!"".equals(format)) {
+                        return format;
+                    }
+                    return typeElement.getInterfaces().stream()
+                            .map(this::extractParameterInitializeStatement)
+                            .filter(f -> f != null)
+                            .findFirst().get();
                 }
-                return typeElement.getInterfaces().stream()
-                        .map(this::extractParameterInitializeStatement)
-                        .filter(f -> f != null)
-                        .findFirst().get();
+                return "";
         }
     }
 
@@ -321,7 +328,9 @@ public class FragmentCreatorWriter {
             } else {
                 builder.addStatement(format, ClassName.get(param.asType()), key, key);
             }
-            builder.addStatement("FragmentCreator.checkRequire($N, $S)", key, key);
+            if (param.getAnnotation(Args.class).require()) {
+                builder.addStatement("FragmentCreator.checkRequire($N, $S)", key, key);
+            }
 
             if (isPrivateField(param)) {
                 builder.addStatement("fragment.set$N($N)", camelCase(key), key);

@@ -8,10 +8,8 @@ public final class MainFragmentCreator extends FragmentCreator {
   public static void read(MainFragment fragment) {
     Bundle args = fragment.getArguments();
     String keyword = args.getString("keyword");
-    FragmentCreator.checkRequire(keyword, "keyword");
     fragment.keyword = keyword;
     String userId = args.getString("userId");
-    FragmentCreator.checkRequire(userId, "userId");
     fragment.userId = userId;
   }
 

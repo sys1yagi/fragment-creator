@@ -7,30 +7,38 @@ public final class MainFragmentCreator extends FragmentCreator {
   public static void read(MainFragment fragment) {
     Bundle args = fragment.getArguments();
     MainFragment.Param2 param = (MainFragment.Param2)args.getSerializable("param");
-    FragmentCreator.checkRequire(param, "param");
     fragment.param = param;
+    MainFragment.C c = (MainFragment.C)args.getSerializable("c");
+    fragment.c = c;
   }
 
   public static final class Builder {
     MainFragment.Param2 param;
 
+    MainFragment.C c;
+
     private Builder() {
     }
 
     public static Builder newInstance() {
-      Builder builder = new Builder();
-      return builder;
+        Builder builder = new Builder();
+        return builder;
     }
 
     public Builder setParam(MainFragment.Param2 param) {
-      this.param = param;
-      return this;
+        this.param = param;
+        return this;
+    }
+    public Builder setC(MainFragment.C c){
+        this.c = c;
+        return this;
     }
 
     public MainFragment build() {
       MainFragment fragment = new MainFragment();
       Bundle args = new Bundle();
       args.putSerializable("param", param);
+      args.putSerializable("c", c);
       fragment.setArguments(args);
       return fragment;
     }
