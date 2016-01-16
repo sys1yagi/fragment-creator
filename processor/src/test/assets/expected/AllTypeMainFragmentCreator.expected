@@ -10,34 +10,42 @@ import java.lang.String;
 public final class MainFragmentCreator extends FragmentCreator {
   public static void read(MainFragment fragment) {
     Bundle args = fragment.getArguments();
-    fragment.keyword = args.getString("keyword");
-    fragment.flag = args.getBoolean("flag");
-    fragment.aByte = args.getByte("aByte");
-    fragment.aChar = args.getChar("aChar");
-    fragment.aShort = args.getShort("aShort");
-    fragment.anInt = args.getInt("anInt");
-    fragment.aLong = args.getLong("aLong");
-    fragment.aFloat = args.getFloat("aFloat");
-    fragment.aDouble = args.getDouble("aDouble");
-    fragment.charSequence = args.getCharSequence("charSequence");
-    fragment.parcelable = args.getParcelable("parcelable");
-    fragment.serializable = (Serializable)args.getSerializable("serializable");
-    checkRequired(fragment);
-  }
-
-  public static void checkRequired(MainFragment fragment) {
-    FragmentCreator.checkRequire(fragment.keyword, "keyword");
-    FragmentCreator.checkRequire(fragment.flag, "flag");
-    FragmentCreator.checkRequire(fragment.aByte, "aByte");
-    FragmentCreator.checkRequire(fragment.aChar, "aChar");
-    FragmentCreator.checkRequire(fragment.aShort, "aShort");
-    FragmentCreator.checkRequire(fragment.anInt, "anInt");
-    FragmentCreator.checkRequire(fragment.aLong, "aLong");
-    FragmentCreator.checkRequire(fragment.aFloat, "aFloat");
-    FragmentCreator.checkRequire(fragment.aDouble, "aDouble");
-    FragmentCreator.checkRequire(fragment.charSequence, "charSequence");
-    FragmentCreator.checkRequire(fragment.parcelable, "parcelable");
-    FragmentCreator.checkRequire(fragment.serializable, "serializable");
+    String keyword = args.getString("keyword");
+    FragmentCreator.checkRequire(keyword, "keyword");
+    fragment.keyword = keyword;
+    boolean flag = args.getBoolean("flag");
+    FragmentCreator.checkRequire(flag, "flag");
+    fragment.flag = flag;
+    byte aByte = args.getByte("aByte");
+    FragmentCreator.checkRequire(aByte, "aByte");
+    fragment.aByte = aByte;
+    char aChar = args.getChar("aChar");
+    FragmentCreator.checkRequire(aChar, "aChar");
+    fragment.aChar = aChar;
+    short aShort = args.getShort("aShort");
+    FragmentCreator.checkRequire(aShort, "aShort");
+    fragment.aShort = aShort;
+    int anInt = args.getInt("anInt");
+    FragmentCreator.checkRequire(anInt, "anInt");
+    fragment.anInt = anInt;
+    long aLong = args.getLong("aLong");
+    FragmentCreator.checkRequire(aLong, "aLong");
+    fragment.aLong = aLong;
+    float aFloat = args.getFloat("aFloat");
+    FragmentCreator.checkRequire(aFloat, "aFloat");
+    fragment.aFloat = aFloat;
+    double aDouble = args.getDouble("aDouble");
+    FragmentCreator.checkRequire(aDouble, "aDouble");
+    fragment.aDouble = aDouble;
+    CharSequence charSequence = args.getCharSequence("charSequence");
+    FragmentCreator.checkRequire(charSequence, "charSequence");
+    fragment.charSequence = charSequence;
+    Parcelable parcelable = args.getParcelable("parcelable");
+    FragmentCreator.checkRequire(parcelable, "parcelable");
+    fragment.parcelable = parcelable;
+    Serializable serializable = (Serializable)args.getSerializable("serializable");
+    FragmentCreator.checkRequire(serializable, "serializable");
+    fragment.serializable = serializable;
   }
 
   public static final class Builder {

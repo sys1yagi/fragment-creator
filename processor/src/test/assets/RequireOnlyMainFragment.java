@@ -12,5 +12,9 @@ public class MainFragment extends Fragment {
     String keyword;
 
     @Args
-    String userId;
+    private String userId;
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

@@ -7,14 +7,14 @@ import java.lang.String;
 public final class MainFragmentCreator extends FragmentCreator {
     public static void read(MainFragment fragment){
             Bundle args = fragment.getArguments();
-            fragment.keyword = args.getString("keyword");
-            fragment.userId = args.getString("userId");
-            checkRequired(fragment);
-    }
 
-    public static void checkRequired(MainFragment fragment) {
-        FragmentCreator.checkRequire(fragment.keyword, "keyword");
-        FragmentCreator.checkRequire(fragment.userId, "userId");
+            String keyword = args.getString("keyword");
+            FragmentCreator.checkRequire(keyword, "keyword");
+            fragment.keyword = keyword;
+
+            String userId = args.getString("userId");
+            FragmentCreator.checkRequire(userId, "userId");
+            fragment.setUserId(userId);
     }
 
     public static final class Builder {

@@ -5,48 +5,46 @@ import com.sys1yagi.fragmentcreator.FragmentCreator;
 import java.lang.String;
 
 public final class MainFragmentCreator extends FragmentCreator {
+  public static void read(MainFragment fragment) {
+    Bundle args = fragment.getArguments();
+    String keyword = args.getString("keyword");
+    FragmentCreator.checkRequire(keyword, "keyword");
+    fragment.keyword = keyword;
+    String userId = args.getString("userId");
+    FragmentCreator.checkRequire(userId, "userId");
+    fragment.userId = userId;
+  }
 
+  public static final class Builder {
+    String keyword;
 
-    public static void read(MainFragment fragment) {
-        Bundle args = fragment.getArguments();
-        fragment.keyword = args.getString("keyword");
-        fragment.userId = args.getString("userId");
-        checkRequired(fragment);
+    String userId;
+
+    private Builder() {
     }
 
-    public static void checkRequired(MainFragment fragment) {
+    public static Builder newInstance() {
+      Builder builder = new Builder();
+      return builder;
     }
 
-      public static final class Builder {
-        String keyword;
+    public Builder setKeyword(String keyword) {
+      this.keyword = keyword;
+      return this;
+    }
 
-        String userId;
+    public Builder setUserId(String userId) {
+      this.userId = userId;
+      return this;
+    }
 
-        private Builder() {
-        }
-
-        public static Builder newInstance() {
-          Builder builder = new Builder();
-          return builder;
-        }
-
-        public Builder setKeyword(String keyword) {
-          this.keyword = keyword;
-          return this;
-        }
-
-        public Builder setUserId(String userId) {
-          this.userId = userId;
-          return this;
-        }
-
-        public MainFragment build() {
-          MainFragment fragment = new MainFragment();
-          Bundle args = new Bundle();
-          args.putString("keyword", keyword);
-          args.putString("userId", userId);
-          fragment.setArguments(args);
-          return fragment;
-        }
-      }
+    public MainFragment build() {
+      MainFragment fragment = new MainFragment();
+      Bundle args = new Bundle();
+      args.putString("keyword", keyword);
+      args.putString("userId", userId);
+      fragment.setArguments(args);
+      return fragment;
+    }
+  }
 }

@@ -43,7 +43,6 @@ public class FragmentCreatorWriter {
 
         List<MethodSpec> methodSpecs = new ArrayList<>();
         methodSpecs.add(createReadMethod(model));
-        methodSpecs.add(createCheckRequired(model));
         classBuilder.addMethods(methodSpecs);
 
         TypeSpec outClass = classBuilder.build();
@@ -228,7 +227,6 @@ public class FragmentCreatorWriter {
 
         List<VariableElement> argsList = model.getArgsList();
         createParameterInitializeStatement(builder, argsList);
-        builder.addStatement("checkRequired(fragment)");
 
         return builder.build();
     }
@@ -254,9 +252,6 @@ public class FragmentCreatorWriter {
     //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
 
     String extractParameterInitializeStatement(TypeMirror typeMirror) {
-
-        System.out.println("set : " + typeMirror.toString());
-
         switch (typeMirror.toString()) {
             case "java.lang.Object":
                 return "";
@@ -306,37 +301,32 @@ public class FragmentCreatorWriter {
         }
     }
 
-    private void createParameterInitializeStatement(MethodSpec.Builder builder,
-            List<VariableElement> params) {
-        params.forEach(param -> {
-            String key = param.getSimpleName().toString();
-            String prefix = "fragment.$N = ";
-            String format = prefix + extractParameterInitializeStatement(param.asType());
+    boolean isPrivateField(VariableElement field) {
+        return field.getModifiers().contains(Modifier.PRIVATE);
+    }
 
+    private void createParameterInitializeStatement(MethodSpec.Builder builder, List<VariableElement> params) {
+        params.forEach(param -> {
+
+            String key = param.getSimpleName().toString();
+            String prefix = "$T $N = ";
+            String extracted = extractParameterInitializeStatement(param.asType());
+            String format = prefix + extracted;
             if (prefix.equals(format)) {
                 throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
             }
-
-            if (format.contains("$T")) {
-                builder.addStatement(format, key, ClassName.get(param.asType()), key);
+            if (extracted.contains("$T")) {
+                builder.addStatement(format, ClassName.get(param.asType()), key, ClassName.get(param.asType()), key);
             } else {
-                builder.addStatement(format, key, key);
+                builder.addStatement(format, ClassName.get(param.asType()), key, key);
+            }
+            builder.addStatement("FragmentCreator.checkRequire($N, $S)", key, key);
+
+            if (isPrivateField(param)) {
+                builder.addStatement("fragment.set$N($N)", camelCase(key), key);
+            } else {
+                builder.addStatement("fragment.$N = $N", key, key);
             }
         });
-    }
-
-    private MethodSpec createCheckRequired(FragmentCreatorModel model) {
-        MethodSpec.Builder builder = MethodSpec.methodBuilder("checkRequired")
-                .addParameter(ClassName.get(model.getElement()), "fragment")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(void.class);
-        model.getArgsList().stream()
-                .filter(element -> element.getAnnotation(Args.class).require())
-                .forEach(element -> {
-                    String name = element.getSimpleName().toString();
-                    builder.addStatement("$T.checkRequire(fragment.$N, $S)", ClassName.get(FragmentCreator.class), name,
-                            name);
-                });
-        return builder.build();
     }
 }
