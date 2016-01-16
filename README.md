@@ -60,6 +60,25 @@ public MainFragment extends Fragment {
 }
 ```
 
+### Private field
+
+You __should__ declare a setter method if using private field.
+
+```java
+public MainFragment extends Fragment {
+
+    @Args
+    String keyword;
+
+    @Args(require = false)
+    private String userId;
+
+    public String setUserId(String userId){
+        this.userId = userId;
+    }
+}
+```
+
 ### Supported types
 
 - primitive type
@@ -101,8 +120,8 @@ public MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.4.0'
-compile 'com.github.sys1yagi.fragment-creator:library:0.4.0'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.5.0'
+compile 'com.github.sys1yagi.fragment-creator:library:0.5.0'
 ```
 
 ## Development

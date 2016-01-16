@@ -60,6 +60,25 @@ public MainFragment extends Fragment {
 }
 ```
 
+### Private field
+
+You __should__ declare a setter method if using private field.
+
+```java
+public MainFragment extends Fragment {
+
+    @Args
+    String keyword;
+
+    @Args(require = false)
+    private String userId;
+
+    public String setUserId(String userId){
+        this.userId = userId;
+    }
+}
+```
+
 ### Supported types
 
 - primitive type
