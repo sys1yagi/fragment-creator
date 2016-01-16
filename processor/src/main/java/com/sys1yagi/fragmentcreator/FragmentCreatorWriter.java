@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
 public class FragmentCreatorWriter {
@@ -30,7 +30,10 @@ public class FragmentCreatorWriter {
 
     FragmentCreatorModel model;
 
-    public FragmentCreatorWriter(FragmentCreatorModel model) {
+    ProcessingEnvironment environment;
+
+    public FragmentCreatorWriter(ProcessingEnvironment environment, FragmentCreatorModel model) {
+        this.environment = environment;
         this.model = model;
     }
 
@@ -193,8 +196,7 @@ public class FragmentCreatorWriter {
             case "java.io.Serializable":
                 return "args.putSerializable($S, $N)";
             default:
-                DeclaredType declaredType = (DeclaredType) typeMirror;
-                TypeElement typeElement = (TypeElement) declaredType.asElement();
+                TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
                 String format = extractPutMethod(typeElement.getSuperclass());
                 if (format != null) {
                     return format;
@@ -288,8 +290,7 @@ public class FragmentCreatorWriter {
             case "java.io.Serializable":
                 return "($T)args.getSerializable($S)";
             default:
-                DeclaredType declaredType = (DeclaredType) typeMirror;
-                TypeElement typeElement = (TypeElement) declaredType.asElement();
+                TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
                 String format = extractParameterInitializeStatement(typeElement.getSuperclass());
                 if (!"".equals(format)) {
                     return format;

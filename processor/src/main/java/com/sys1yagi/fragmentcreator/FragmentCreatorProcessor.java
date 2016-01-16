@@ -43,7 +43,7 @@ public class FragmentCreatorProcessor extends AbstractProcessor {
             List<FragmentCreatorModel> models = EnvParser.parse(env, elementUtils);
             for (FragmentCreatorModel model : models) {
                 {
-                    FragmentCreatorWriter writer = new FragmentCreatorWriter(model);
+                    FragmentCreatorWriter writer = new FragmentCreatorWriter(processingEnv, model);
                     try {
                         writer.write(filer);
                     } catch (IOException e) {
