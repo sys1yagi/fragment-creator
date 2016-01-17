@@ -49,29 +49,29 @@ public final class MainFragmentCreator extends FragmentCreator {
   }
 
   public static final class Builder {
-    String keyword;
+    private String keyword;
 
-    boolean flag;
+    private boolean flag;
 
-    byte aByte;
+    private byte aByte;
 
-    char aChar;
+    private char aChar;
 
-    short aShort;
+    private short aShort;
 
-    int anInt;
+    private int anInt;
 
-    long aLong;
+    private long aLong;
 
-    float aFloat;
+    private float aFloat;
 
-    double aDouble;
+    private double aDouble;
 
-    CharSequence charSequence;
+    private CharSequence charSequence;
 
-    Parcelable parcelable;
+    private Parcelable parcelable;
 
-    Serializable serializable;
+    private Serializable serializable;
 
     private Builder() {
     }

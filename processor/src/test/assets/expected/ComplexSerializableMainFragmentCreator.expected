@@ -13,9 +13,9 @@ public final class MainFragmentCreator extends FragmentCreator {
   }
 
   public static final class Builder {
-    MainFragment.Param2 param;
+    private MainFragment.Param2 param;
 
-    MainFragment.C c;
+    private MainFragment.C c;
 
     private Builder() {
     }

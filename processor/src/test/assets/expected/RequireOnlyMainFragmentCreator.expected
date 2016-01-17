@@ -18,9 +18,9 @@ public final class MainFragmentCreator extends FragmentCreator {
     }
 
     public static final class Builder {
-        String keyword;
+        private String keyword;
 
-        String userId;
+        private String userId;
 
         private Builder() {
         }

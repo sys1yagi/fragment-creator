@@ -73,7 +73,9 @@ public class FragmentCreatorWriter {
 
     private List<FieldSpec> createBuilderFields(List<VariableElement> argsList) {
         return argsList.stream().map(args ->
-                FieldSpec.builder(ClassName.get(args.asType()), args.getSimpleName().toString()).build()
+                FieldSpec.builder(ClassName.get(args.asType()), args.getSimpleName().toString())
+                        .addModifiers(Modifier.PRIVATE)
+                        .build()
         ).collect(Collectors.toList());
     }
 
