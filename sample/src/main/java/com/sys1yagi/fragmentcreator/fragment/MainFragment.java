@@ -1,9 +1,7 @@
 package com.sys1yagi.fragmentcreator.fragment;
 
 import com.sys1yagi.fragmentcreator.R;
-import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
-import com.sys1yagi.fragmentcreator.log.Logger;
 import com.sys1yagi.fragmentcreator.model.Shop;
 
 import android.os.Bundle;
@@ -12,22 +10,27 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 @FragmentCreator
 public class MainFragment extends Fragment {
 
-    @Args
-    String keyword;
+    final static String REQUIRED_ARGUMENTS = "Required Arguments";
 
-    @Args(require = false)
-    String userId;
+    final static String OPTIONAL_ARGUMENTS = "Optional Arguments";
 
-    @Args
-    Shop shop;
+    final static String NO_ARGUMENTS = "No Arguments";
 
-    @Args(require = false)
-    Logger logger;
+    final static String DEFAULT_VALUES = "Default Values";
+
+    final static String ARGUMENTS_VALIDATOR = "Arguments Validator";
+
+    final static String TYPE_CONVERTER = "Type Converter";
+
+    final static String INHERITANCE = "Inheritance";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,8 +48,77 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((TextView) view.findViewById(R.id.keyword)).setText(keyword);
-        ((TextView) view.findViewById(R.id.user_id)).setText(userId);
-        ((TextView) view.findViewById(R.id.shop)).setText(shop.getId() + " " + shop.getName());
+        ListView listView = (ListView) view.findViewById(R.id.list_view);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        adapter.add(REQUIRED_ARGUMENTS);
+        adapter.add(OPTIONAL_ARGUMENTS);
+        adapter.add(NO_ARGUMENTS);
+        adapter.add(DEFAULT_VALUES);
+        adapter.add(ARGUMENTS_VALIDATOR);
+        adapter.add(TYPE_CONVERTER);
+        adapter.add(INHERITANCE);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String title = adapter.getItem(position);
+                openFragment(title);
+            }
+        });
+    }
+
+    void openFragment(String title) {
+        switch (title) {
+            case REQUIRED_ARGUMENTS:
+                openRequiredArgumentsFragment();
+                break;
+            case OPTIONAL_ARGUMENTS:
+                openOptionalArgumentsFragment();
+                break;
+            case NO_ARGUMENTS:
+                openNoArgumentsFragment();
+                break;
+            default:
+                Toast.makeText(getContext(), "Not Yet Implemented...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void openRequiredArgumentsFragment() {
+        getFragmentManager()
+                .beginTransaction()
+                .addToBackStack(REQUIRED_ARGUMENTS)
+                .replace(
+                        R.id.container,
+                        RequiredArgumentsFragmentCreator.Builder
+                                .newInstance("Hello Fragment Creator", new Shop(10, "Fragment Creator Store"))
+                                .build())
+                .commit();
+    }
+
+    void openOptionalArgumentsFragment() {
+        getFragmentManager()
+                .beginTransaction()
+                .addToBackStack(OPTIONAL_ARGUMENTS)
+                .replace(
+                        R.id.container,
+                        OptionalArgumentsFragmentCreator.Builder
+                                .newInstance()
+                                .setId(10)
+                                .setKeyword("test")
+                                .build())
+                .commit();
+    }
+
+    void openNoArgumentsFragment() {
+        getFragmentManager()
+                .beginTransaction()
+                .addToBackStack(NO_ARGUMENTS)
+                .replace(
+                        R.id.container,
+                        NoArgumentsFragmentCreator.Builder
+                                .newInstance()
+                                .build())
+                .commit();
     }
 }
