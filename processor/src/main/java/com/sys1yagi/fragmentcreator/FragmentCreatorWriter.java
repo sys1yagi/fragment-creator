@@ -40,11 +40,14 @@ public class FragmentCreatorWriter {
         classBuilder.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
         ClassName superClassName = ClassName.get(FragmentCreator.class);
         classBuilder.superclass(superClassName);
+
         classBuilder.addType(createBuilderClass(model));
 
         List<MethodSpec> methodSpecs = new ArrayList<>();
         methodSpecs.add(createReadMethod(model));
         classBuilder.addMethods(methodSpecs);
+
+        classBuilder.addMethod(createBuilderNewBuilder(getBuilderTypeName(model), model.getArgsList()));
 
         TypeSpec outClass = classBuilder.build();
         JavaFile.builder(model.getPackageName(), outClass)
@@ -58,7 +61,6 @@ public class FragmentCreatorWriter {
 
         classBuilder.addFields(createBuilderFields(model.getArgsList()));
         classBuilder.addMethod(createBuilderConstructor());
-        classBuilder.addMethod(createBuilderNewInstance(getBuilderTypeName(model), model.getArgsList()));
         classBuilder.addMethods(createBuilderSetterMethods(getBuilderTypeName(model), model.getArgsList()));
         classBuilder.addMethod(createBuildMethod(model.getElement(), model.getArgsList()));
 
@@ -83,8 +85,8 @@ public class FragmentCreatorWriter {
                 .build();
     }
 
-    private MethodSpec createBuilderNewInstance(TypeName builderTypeName, List<VariableElement> argsList) {
-        MethodSpec.Builder builder = MethodSpec.methodBuilder("create")
+    private MethodSpec createBuilderNewBuilder(TypeName builderTypeName, List<VariableElement> argsList) {
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("newBuilder")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(builderTypeName);
         builder.addStatement("Builder builder = new Builder()");

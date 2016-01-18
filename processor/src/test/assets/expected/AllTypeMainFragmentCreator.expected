@@ -48,6 +48,23 @@ public final class MainFragmentCreator extends FragmentCreator {
     fragment.serializable = serializable;
   }
 
+  public static Builder newBuilder(String keyword, boolean flag, byte aByte, char aChar, short aShort, int anInt, long aLong, float aFloat, double aDouble, CharSequence charSequence, Parcelable parcelable, Serializable serializable) {
+      Builder builder = new Builder();
+      builder.keyword = keyword;
+      builder.flag = flag;
+      builder.aByte = aByte;
+      builder.aChar = aChar;
+      builder.aShort = aShort;
+      builder.anInt = anInt;
+      builder.aLong = aLong;
+      builder.aFloat = aFloat;
+      builder.aDouble = aDouble;
+      builder.charSequence = charSequence;
+      builder.parcelable = parcelable;
+      builder.serializable = serializable;
+      return builder;
+  }
+
   public static final class Builder {
     private String keyword;
 
@@ -74,23 +91,6 @@ public final class MainFragmentCreator extends FragmentCreator {
     private Serializable serializable;
 
     private Builder() {
-    }
-
-    public static Builder newInstance(String keyword, boolean flag, byte aByte, char aChar, short aShort, int anInt, long aLong, float aFloat, double aDouble, CharSequence charSequence, Parcelable parcelable, Serializable serializable) {
-      Builder builder = new Builder();
-      builder.keyword = keyword;
-      builder.flag = flag;
-      builder.aByte = aByte;
-      builder.aChar = aChar;
-      builder.aShort = aShort;
-      builder.anInt = anInt;
-      builder.aLong = aLong;
-      builder.aFloat = aFloat;
-      builder.aDouble = aDouble;
-      builder.charSequence = charSequence;
-      builder.parcelable = parcelable;
-      builder.serializable = serializable;
-      return builder;
     }
 
     public MainFragment build() {

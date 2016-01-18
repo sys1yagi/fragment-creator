@@ -12,17 +12,17 @@ public final class MainFragmentCreator extends FragmentCreator {
     fragment.c = c;
   }
 
+  public static Builder newBuilder() {
+        Builder builder = new Builder();
+        return builder;
+  }
+
   public static final class Builder {
     private MainFragment.Param2 param;
 
     private MainFragment.C c;
 
     private Builder() {
-    }
-
-    public static Builder newInstance() {
-        Builder builder = new Builder();
-        return builder;
     }
 
     public Builder setParam(MainFragment.Param2 param) {

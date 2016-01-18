@@ -17,19 +17,19 @@ public final class MainFragmentCreator extends FragmentCreator {
             fragment.setUserId(userId);
     }
 
+    public static Builder newBuilder(String keyword, String userId) {
+            Builder builder =  new Builder();
+            builder.keyword = keyword;
+            builder.userId = userId;
+            return builder;
+    }
+
     public static final class Builder {
         private String keyword;
 
         private String userId;
 
         private Builder() {
-        }
-
-        public static Builder newInstance(String keyword, String userId) {
-            Builder builder =  new Builder();
-            builder.keyword = keyword;
-            builder.userId = userId;
-            return builder;
         }
 
         public MainFragment build(){
