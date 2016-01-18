@@ -26,8 +26,6 @@ import javax.lang.model.type.TypeMirror;
 
 public class FragmentCreatorWriter {
 
-    private final static String NEW_INSTANCE = "newInstance";
-
     FragmentCreatorModel model;
 
     ProcessingEnvironment environment;
@@ -86,7 +84,7 @@ public class FragmentCreatorWriter {
     }
 
     private MethodSpec createBuilderNewInstance(TypeName builderTypeName, List<VariableElement> argsList) {
-        MethodSpec.Builder builder = MethodSpec.methodBuilder(NEW_INSTANCE)
+        MethodSpec.Builder builder = MethodSpec.methodBuilder("create")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(builderTypeName);
         builder.addStatement("Builder builder = new Builder()");
