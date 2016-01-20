@@ -79,6 +79,9 @@ public class MainFragment extends Fragment {
             case NO_ARGUMENTS:
                 openNoArgumentsFragment();
                 break;
+            case DEFAULT_VALUES:
+                openDefaultValueArgumentsFragment();
+                break;
             default:
                 Toast.makeText(getContext(), "Not Yet Implemented...", Toast.LENGTH_SHORT).show();
         }
@@ -90,8 +93,8 @@ public class MainFragment extends Fragment {
                 .addToBackStack(REQUIRED_ARGUMENTS)
                 .replace(
                         R.id.container,
-                        RequiredArgumentsFragmentCreator.Builder
-                                .newInstance("Hello Fragment Creator", new Shop(10, "Fragment Creator Store"))
+                        RequiredArgumentsFragmentCreator
+                                .newBuilder("Hello Fragment Creator", new Shop(10, "Fragment Creator Store"))
                                 .build())
                 .commit();
     }
@@ -102,8 +105,8 @@ public class MainFragment extends Fragment {
                 .addToBackStack(OPTIONAL_ARGUMENTS)
                 .replace(
                         R.id.container,
-                        OptionalArgumentsFragmentCreator.Builder
-                                .newInstance()
+                        OptionalArgumentsFragmentCreator
+                                .newBuilder()
                                 .setId(10)
                                 .setKeyword("test")
                                 .build())
@@ -116,8 +119,20 @@ public class MainFragment extends Fragment {
                 .addToBackStack(NO_ARGUMENTS)
                 .replace(
                         R.id.container,
-                        NoArgumentsFragmentCreator.Builder
-                                .newInstance()
+                        NoArgumentsFragmentCreator
+                                .newBuilder()
+                                .build())
+                .commit();
+    }
+
+    void openDefaultValueArgumentsFragment() {
+        getFragmentManager()
+                .beginTransaction()
+                .addToBackStack(DEFAULT_VALUES)
+                .replace(
+                        R.id.container,
+                        DefaultValueFragmentCreator
+                                .newBuilder()
                                 .build())
                 .commit();
     }

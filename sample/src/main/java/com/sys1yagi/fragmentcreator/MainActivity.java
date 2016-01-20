@@ -18,8 +18,8 @@ public class MainActivity extends AppCompatActivity {
                     .beginTransaction()
                     .add(
                             R.id.container,
-                            MainFragmentCreator.Builder
-                                    .newInstance()
+                            MainFragmentCreator
+                                    .newBuilder()
                                     .build())
                     .commit();
         }

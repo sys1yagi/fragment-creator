@@ -29,12 +29,12 @@ Then, MainFragmentCreator is generated.
 ### Create fragment with the FragmentCreator
 
 ```java
-MainFragment instance = MainFragmentCreator.Builder
-                            .newInstance("keyword")
+MainFragment instance = MainFragmentCreator
+                            .newBuilder("keyword")
                             .build();
 
 MainFragment instance = MainFragmentCreator
-                            .newInstance("keyword") // required
+                            .newBuilder("keyword")  // required
                             .setUserId("mike")      // optional
                             .build();
 ```
@@ -59,6 +59,36 @@ public MainFragment extends Fragment {
     }
 }
 ```
+
+### Default value
+
+You can set default value.
+
+```java
+public MainFragment extends Fragment {
+
+    // The default value can be set only if the argument is optional.
+    @Args(require = false, defaultString = "unknown")
+    String keyword;
+
+    @Args(require = false, defaultInt = -1)
+    int userId;
+
+}
+```
+
+Supported types
+
+- primitive type
+- java.lang.String
+- java.lang.Boolean
+- java.lang.Byte
+- java.lang.Character
+- java.lang.Short
+- java.lang.Integer
+- java.lang.Long
+- java.lang.Float
+- java.lang.Double
 
 ### Private field
 
@@ -120,8 +150,8 @@ public MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.5.2'
-compile 'com.github.sys1yagi.fragment-creator:library:0.5.2'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.6.0'
+compile 'com.github.sys1yagi.fragment-creator:library:0.6.0'
 ```
 
 ## Development
