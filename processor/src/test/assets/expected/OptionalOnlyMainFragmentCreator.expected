@@ -7,9 +7,9 @@ import java.lang.String;
 public final class MainFragmentCreator extends FragmentCreator {
   public static void read(MainFragment fragment) {
     Bundle args = fragment.getArguments();
-    String keyword = args.getString("keyword");
+    String keyword = args.getString("keyword", "");
     fragment.keyword = keyword;
-    String userId = args.getString("userId");
+    String userId = args.getString("userId", "");
     fragment.userId = userId;
   }
 

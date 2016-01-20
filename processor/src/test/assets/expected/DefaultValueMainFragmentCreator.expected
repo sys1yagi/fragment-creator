@@ -1,0 +1,53 @@
+package com.sys1yagi.fragmentcreator.fragment;
+
+import android.os.Bundle;
+import com.sys1yagi.fragmentcreator.FragmentCreator;
+import java.lang.String;
+
+public final class MainFragmentCreator extends FragmentCreator {
+    public static void read(MainFragment fragment){
+            Bundle args = fragment.getArguments();
+
+            String userId = args.getString("userId", "default");
+            fragment.userId = userId;
+
+            char aChar = args.getChar("aChar", 'a');
+            fragment.aChar = aChar;
+    }
+
+    public static Builder newBuilder() {
+            Builder builder =  new Builder();
+            return builder;
+    }
+
+    public static final class Builder {
+
+        private String userId;
+
+        private char aChar;
+
+        private Builder() {
+        }
+
+        public Builder setUserId(String userId){
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder setAChar(char aChar){
+            this.aChar = aChar;
+            return this;
+        }
+        public MainFragment build(){
+            MainFragment fragment = new MainFragment();
+
+            Bundle args = new Bundle();
+            args.putString("userId", userId);
+            args.putChar("aChar", aChar);
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+    }
+
+}

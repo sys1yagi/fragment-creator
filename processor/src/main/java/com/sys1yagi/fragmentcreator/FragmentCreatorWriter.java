@@ -234,7 +234,13 @@ public class FragmentCreatorWriter {
         builder.addStatement("$T args = fragment.getArguments()", ClassName.get("android.os", "Bundle"));
 
         List<VariableElement> argsList = model.getArgsList();
-        createParameterInitializeStatement(builder, argsList);
+        argsList.forEach(args -> {
+            if (hasDefaultValue(args)) {
+                createParameterWithDefaultValueInitializeStatement(builder, args);
+            } else {
+                createParameterInitializeStatement(builder, args);
+            }
+        });
 
         return builder.build();
     }
@@ -259,7 +265,66 @@ public class FragmentCreatorWriter {
     //    public  void putCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
     //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
 
-    String extractParameterInitializeStatement(TypeMirror typeMirror) {
+    void createGetParameterWithDefaultValueInitializeStatement(MethodSpec.Builder builder, VariableElement param,
+            TypeMirror typeMirror) {
+        Args args = param.getAnnotation(Args.class);
+        String key = param.getSimpleName().toString();
+        switch (typeMirror.toString()) {
+            case "java.lang.Object":
+                throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
+            case "java.lang.String":
+                builder.addStatement("$T $N = args.getString($S, $S)", ClassName.get(param.asType()), key, key,
+                        args.defaultString());
+                break;
+            case "boolean":
+            case "java.lang.Boolean":
+                builder.addStatement("$T $N = args.getBoolean($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultBoolean());
+                break;
+            case "byte":
+            case "java.lang.Byte":
+                builder.addStatement("$T $N = args.getByte($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultByte());
+                break;
+            case "char":
+            case "java.lang.Character":
+                builder.addStatement("$T $N = args.getChar($S, '$L')", ClassName.get(param.asType()), key, key,
+                        args.defaultChar());
+                break;
+            case "short":
+            case "java.lang.Short":
+                builder.addStatement("$T $N = args.getShort($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultShort());
+                break;
+            case "int":
+            case "java.lang.Integer":
+                builder.addStatement("$T $N = args.getInt($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultInt());
+                break;
+            case "long":
+            case "java.lang.Long":
+                builder.addStatement("$T $N = args.getLong($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultLong());
+                break;
+            case "float":
+            case "java.lang.Float":
+                builder.addStatement("$T $N = args.getFloat($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultFloat());
+                break;
+            case "double":
+            case "java.lang.Double":
+                builder.addStatement("$T $N = args.getDouble($S, $L)", ClassName.get(param.asType()), key, key,
+                        args.defaultDouble());
+                break;
+            default:
+                TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
+                if (typeElement != null) {
+                    createGetParameterWithDefaultValueInitializeStatement(builder, param, typeElement.getSuperclass());
+                }
+        }
+    }
+
+    String extractParameterGetMethodFormat(TypeMirror typeMirror) {
         switch (typeMirror.toString()) {
             case "java.lang.Object":
                 return "";
@@ -298,12 +363,12 @@ public class FragmentCreatorWriter {
             default:
                 TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
                 if (typeElement != null) {
-                    String format = extractParameterInitializeStatement(typeElement.getSuperclass());
+                    String format = extractParameterGetMethodFormat(typeElement.getSuperclass());
                     if (!"".equals(format)) {
                         return format;
                     }
                     return typeElement.getInterfaces().stream()
-                            .map(this::extractParameterInitializeStatement)
+                            .map(this::extractParameterGetMethodFormat)
                             .filter(f -> f != null)
                             .findFirst().get();
                 }
@@ -315,30 +380,68 @@ public class FragmentCreatorWriter {
         return field.getModifiers().contains(Modifier.PRIVATE);
     }
 
-    private void createParameterInitializeStatement(MethodSpec.Builder builder, List<VariableElement> params) {
-        params.forEach(param -> {
+    boolean hasDefaultValue(VariableElement field) {
+        Args args = field.getAnnotation(Args.class);
+        if (args.require()) {
+            return false;
+        }
+        switch (field.asType().toString()) {
+            case "java.lang.String":
+            case "boolean":
+            case "java.lang.Boolean":
+            case "byte":
+            case "java.lang.Byte":
+            case "char":
+            case "java.lang.Character":
+            case "short":
+            case "java.lang.Short":
+            case "int":
+            case "java.lang.Integer":
+            case "long":
+            case "java.lang.Long":
+            case "float":
+            case "java.lang.Float":
+            case "double":
+            case "java.lang.Double":
+                return true;
+        }
+        return false;
+    }
 
-            String key = param.getSimpleName().toString();
-            String prefix = "$T $N = ";
-            String extracted = extractParameterInitializeStatement(param.asType());
-            String format = prefix + extracted;
-            if (prefix.equals(format)) {
-                throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
-            }
-            if (extracted.contains("$T")) {
-                builder.addStatement(format, ClassName.get(param.asType()), key, ClassName.get(param.asType()), key);
-            } else {
-                builder.addStatement(format, ClassName.get(param.asType()), key, key);
-            }
-            if (param.getAnnotation(Args.class).require()) {
-                builder.addStatement("FragmentCreator.checkRequire($N, $S)", key, key);
-            }
+    private void createParameterWithDefaultValueInitializeStatement(MethodSpec.Builder builder, VariableElement args) {
+        String key = args.getSimpleName().toString();
+        createGetParameterWithDefaultValueInitializeStatement(builder, args, args.asType());
+        if (isPrivateField(args)) {
+            builder.addStatement("fragment.set$N($N)", camelCase(key), key);
+        } else {
+            builder.addStatement("fragment.$N = $N", key, key);
+        }
+    }
 
-            if (isPrivateField(param)) {
-                builder.addStatement("fragment.set$N($N)", camelCase(key), key);
-            } else {
-                builder.addStatement("fragment.$N = $N", key, key);
-            }
-        });
+    private void createParameterInitializeStatement(MethodSpec.Builder builder, VariableElement args) {
+        String key = args.getSimpleName().toString();
+        String prefix = "$T $N = ";
+        String extracted = extractParameterGetMethodFormat(args.asType());
+        String format = prefix + extracted;
+        if (prefix.equals(format)) {
+            throw new UnsupportedTypeException(args.asType().toString() + " is not supported on Bundle.");
+        }
+
+        if (extracted.contains("$T")) {
+            //serializable
+            builder.addStatement(format, ClassName.get(args.asType()), key, ClassName.get(args.asType()), key);
+        } else {
+            builder.addStatement(format, ClassName.get(args.asType()), key, key);
+        }
+
+        if (args.getAnnotation(Args.class).require()) {
+            builder.addStatement("FragmentCreator.checkRequire($N, $S)", key, key);
+        }
+
+        if (isPrivateField(args)) {
+            builder.addStatement("fragment.set$N($N)", camelCase(key), key);
+        } else {
+            builder.addStatement("fragment.$N = $N", key, key);
+        }
     }
 }

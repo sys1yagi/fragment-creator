@@ -9,6 +9,23 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Args {
 
-    //default false
     boolean require() default true;
+
+    short defaultShort() default 0;
+
+    long defaultLong() default 0;
+
+    float defaultFloat() default 0;
+
+    String defaultString() default "";
+
+    char defaultChar() default 0;
+
+    double defaultDouble() default 0;
+
+    boolean defaultBoolean() default false;
+
+    byte defaultByte() default 0;
+
+    int defaultInt() default 0;
 }

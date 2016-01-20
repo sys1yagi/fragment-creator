@@ -13,6 +13,7 @@ import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 public class FragmentCreatorProcessorTest {
 
+
     @Test
     public void illegalTypeException() throws Exception {
         String javaFile = AssetsUtils.readString("InvalidMainFragment.java");
@@ -113,13 +114,11 @@ public class FragmentCreatorProcessorTest {
 
     }
 
-    //TODO complex pattern
     @Test
     public void complexPattern() throws Exception {
         String javaFile = AssetsUtils.readString("ComplexSerializableMainFragment.java");
 
-        JavaFileObject exampleFragment = JavaFileObjects
-                .forSourceString("MainFragment", javaFile);
+        JavaFileObject exampleFragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
                 .that(exampleFragment)
@@ -129,7 +128,21 @@ public class FragmentCreatorProcessorTest {
                 .generatesSources(JavaFileObjects
                         .forSourceString("MainFragmentCreator",
                                 AssetsUtils.readString("expected/ComplexSerializableMainFragmentCreator.expected")));
+    }
 
+    @Test
+    public void defaultValue() throws Exception {
+        String javaFile = AssetsUtils.readString("DefaultValueMainFragment.java");
+        JavaFileObject fragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
+
+        assert_().about(javaSource())
+                .that(fragment)
+                .processedWith(new FragmentCreatorProcessor())
+                .compilesWithoutError()
+                .and()
+                .generatesSources(JavaFileObjects
+                        .forSourceString("MainFragmentCreator",
+                                AssetsUtils.readString("expected/DefaultValueMainFragmentCreator.expected")));
     }
 
     //TODO unsupported parameter
