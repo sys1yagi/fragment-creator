@@ -150,8 +150,8 @@ public MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.6.0'
-compile 'com.github.sys1yagi.fragment-creator:library:0.6.0'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.6.1'
+compile 'com.github.sys1yagi.fragment-creator:library:0.6.1'
 ```
 
 ## Development
