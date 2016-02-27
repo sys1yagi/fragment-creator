@@ -444,28 +444,34 @@ public class FragmentCreatorWriter {
             throw new UnsupportedTypeException(args.asType().toString() + " is not supported on Bundle.");
         }
 
-        //TODO ここでserializerがあったら前方に処理を噛ませる
-
-        if (!holder.isEmpty()) {
-            extracted = "new $T().deserialize(" + extracted + ")";
-        }
-
-        String format = prefix + extracted;
-
-        if (!holder.isEmpty()) {
-            //$T $N = new $T().deserialize(args.getXXX($S))
-            //$T $N = new $T().deserialize(($T)args.getSerializable($S))
-            builder.addStatement(format,
-                    ClassName.get(args.asType()),
-                    key,
-                    ClassName.get(holder.serializer),
-                    key);
-        } else if (extracted.contains("$T")) {
-            //$T $N = ($T)args.getSerializable($S)
-            builder.addStatement(format, ClassName.get(args.asType()), key, ClassName.get(args.asType()), key);
+        if (extracted.contains("$T")) {
+            if (!holder.isEmpty()) {
+                //$T $N = new $T().deserialize(($T)args.getSerializable($S))
+                extracted = "new $T().deserialize(" + extracted + ")";
+                builder.addStatement(prefix + extracted,
+                        ClassName.get(args.asType()),
+                        key,
+                        ClassName.get(holder.serializer),
+                        ClassName.get(holder.to),
+                        key);
+            } else {
+                //$T $N = ($T)args.getSerializable($S)
+                builder.addStatement(prefix + extracted, ClassName.get(args.asType()), key,
+                        ClassName.get(args.asType()), key);
+            }
         } else {
-            //$T $N = args.getXXX($S)
-            builder.addStatement(format, ClassName.get(args.asType()), key, key);
+            if (!holder.isEmpty()) {
+                //$T $N = new $T().deserialize(args.getXXX($S))
+                extracted = "new $T().deserialize(" + extracted + ")";
+                builder.addStatement(prefix + extracted,
+                        ClassName.get(args.asType()),
+                        key,
+                        ClassName.get(holder.serializer),
+                        key);
+            } else {
+                //$T $N = args.getXXX($S)
+                builder.addStatement(prefix + extracted, ClassName.get(args.asType()), key, key);
+            }
         }
 
         if (args.getAnnotation(Args.class).require()) {

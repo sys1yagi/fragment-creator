@@ -145,8 +145,6 @@ public class FragmentCreatorProcessorTest {
                                 AssetsUtils.readString("expected/DefaultValueMainFragmentCreator.expected")));
     }
 
-    //TODO type serializer
-
     @Test
     public void typeSerializer() throws Exception {
         String javaFile = AssetsUtils.readString("TypeSerializerFragment.java");
@@ -160,6 +158,21 @@ public class FragmentCreatorProcessorTest {
                 .generatesSources(JavaFileObjects
                         .forSourceString("MainFragmentCreator",
                                 AssetsUtils.readString("expected/TypeSerializerMainFragmentCreator.expected")));
+    }
+
+    @Test
+    public void typeSerializerWithSerializable() throws Exception {
+        String javaFile = AssetsUtils.readString("TypeSerializerWithSerializableFragment.java");
+        JavaFileObject fragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
+
+        assert_().about(javaSource())
+                .that(fragment)
+                .processedWith(new FragmentCreatorProcessor())
+                .compilesWithoutError()
+                .and()
+                .generatesSources(JavaFileObjects
+                        .forSourceString("MainFragmentCreator",
+                                AssetsUtils.readString("expected/TypeSerializerWithSerializableMainFragmentCreator.expected")));
     }
 
     //TODO unsupported parameter

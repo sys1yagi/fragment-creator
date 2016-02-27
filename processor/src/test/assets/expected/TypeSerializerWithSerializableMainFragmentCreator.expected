@@ -1,0 +1,38 @@
+package com.sys1yagi.fragmentcreator.fragment;
+
+import android.os.Bundle;
+import com.sys1yagi.fragmentcreator.FragmentCreator;
+
+public final class MainFragmentCreator extends FragmentCreator {
+    public static void read(MainFragment fragment){
+            Bundle args = fragment.getArguments();
+
+            int id = new MainFragment.SerializableSerializer().deserialize((MainFragment.Holder)args.getSerializable("id"));
+            FragmentCreator.checkRequire(id, "id");
+            fragment.id = id;
+    }
+
+    public static Builder newBuilder(int id) {
+            Builder builder =  new Builder();
+            builder.id = id;
+            return builder;
+    }
+
+    public static final class Builder {
+        private int id;
+
+        private Builder() {
+        }
+
+        public MainFragment build(){
+            MainFragment fragment = new MainFragment();
+
+            Bundle args = new Bundle();
+            args.putSerializable("id", new MainFragment.SerializableSerializer().serialize(id));
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+    }
+
+}
