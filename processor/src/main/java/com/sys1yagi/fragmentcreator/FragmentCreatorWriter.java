@@ -8,6 +8,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.exception.UnsupportedTypeException;
+import com.sys1yagi.fragmentcreator.util.SerializerHolder;
 
 import android.os.Bundle;
 
@@ -166,37 +167,37 @@ public class FragmentCreatorWriter {
             case "java.lang.Object":
                 return null;
             case "java.lang.String":
-                return "args.putString($S, $N)";
+                return "args.putString($S,";
             case "boolean":
             case "java.lang.Boolean":
-                return "args.putBoolean($S, $N)";
+                return "args.putBoolean($S,";
             case "byte":
             case "java.lang.Byte":
-                return "args.putByte($S, $N)";
+                return "args.putByte($S,";
             case "char":
             case "java.lang.Character":
-                return "args.putChar($S, $N)";
+                return "args.putChar($S,";
             case "short":
             case "java.lang.Short":
-                return "args.putShort($S, $N)";
+                return "args.putShort($S,";
             case "int":
             case "java.lang.Integer":
-                return "args.putInt($S, $N)";
+                return "args.putInt($S,";
             case "long":
             case "java.lang.Long":
-                return "args.putLong($S, $N)";
+                return "args.putLong($S,";
             case "float":
             case "java.lang.Float":
-                return "args.putFloat($S, $N)";
+                return "args.putFloat($S,";
             case "double":
             case "java.lang.Double":
-                return "args.putDouble($S, $N)";
+                return "args.putDouble($S,";
             case "java.lang.CharSequence":
-                return "args.putCharSequence($S, $N)";
+                return "args.putCharSequence($S,";
             case "android.os.Parcelable":
-                return "args.putParcelable($S, $N)";
+                return "args.putParcelable($S,";
             case "java.io.Serializable":
-                return "args.putSerializable($S, $N)";
+                return "args.putSerializable($S,";
             default:
                 TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
                 if (typeElement != null) {
@@ -214,16 +215,27 @@ public class FragmentCreatorWriter {
         }
     }
 
-    void generatePutMethodCall(MethodSpec.Builder builder, VariableElement param) {
-        String key = param.getSimpleName().toString();
 
-        String format = extractPutMethod(param.asType());
+    void generatePutMethodCall(MethodSpec.Builder builder, VariableElement args) {
+        String key = args.getSimpleName().toString();
+
+        TypeMirror type = args.asType();
+
+        SerializerHolder holder = SerializerHolder.get(args);
+        type = holder.to != null ? holder.to : type;
+        String format = extractPutMethod(type);
 
         if (format == null) {
-            throw new UnsupportedTypeException(param.asType().toString() + " is not supported on Bundle.");
+            throw new UnsupportedTypeException(args.asType().toString() + " is not supported on Bundle.");
         }
 
-        builder.addStatement(format, key, param.getSimpleName());
+        if (holder.isEmpty()) {
+            builder.addStatement(format + " $N)", key, args.getSimpleName());
+        } else {
+            builder.addStatement(format + " new $T().serialize($N))", key,
+                    ClassName.get(holder.serializer),
+                    args.getSimpleName());
+        }
     }
 
     private MethodSpec createReadMethod(FragmentCreatorModel model) {
@@ -421,16 +433,38 @@ public class FragmentCreatorWriter {
     private void createParameterInitializeStatement(MethodSpec.Builder builder, VariableElement args) {
         String key = args.getSimpleName().toString();
         String prefix = "$T $N = ";
-        String extracted = extractParameterGetMethodFormat(args.asType());
-        String format = prefix + extracted;
-        if (prefix.equals(format)) {
+        TypeMirror type = args.asType();
+        SerializerHolder holder = SerializerHolder.get(args);
+        if (!holder.isEmpty()) {
+            type = holder.to;
+        }
+        String extracted = extractParameterGetMethodFormat(type);
+
+        if (extracted == null || extracted.equals("")) {
             throw new UnsupportedTypeException(args.asType().toString() + " is not supported on Bundle.");
         }
 
-        if (extracted.contains("$T")) {
-            //serializable
+        //TODO ここでserializerがあったら前方に処理を噛ませる
+
+        if (!holder.isEmpty()) {
+            extracted = "new $T().deserialize(" + extracted + ")";
+        }
+
+        String format = prefix + extracted;
+
+        if (!holder.isEmpty()) {
+            //$T $N = new $T().deserialize(args.getXXX($S))
+            //$T $N = new $T().deserialize(($T)args.getSerializable($S))
+            builder.addStatement(format,
+                    ClassName.get(args.asType()),
+                    key,
+                    ClassName.get(holder.serializer),
+                    key);
+        } else if (extracted.contains("$T")) {
+            //$T $N = ($T)args.getSerializable($S)
             builder.addStatement(format, ClassName.get(args.asType()), key, ClassName.get(args.asType()), key);
         } else {
+            //$T $N = args.getXXX($S)
             builder.addStatement(format, ClassName.get(args.asType()), key, key);
         }
 

@@ -8,11 +8,11 @@ import com.sys1yagi.fragmentcreator.annotation.Serializer;
 import android.support.v4.app.Fragment;
 
 @FragmentCreator
-public class TypeSerializerFragment2 extends Fragment {
+public class MainFragment extends Fragment {
 
     @Args
     @Serializer(to = String.class, serializer = StringSerializer.class)
-    int product;
+    int id;
 
     static class StringSerializer implements ArgsSerializer<Integer, String> {
 
