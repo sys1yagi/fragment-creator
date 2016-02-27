@@ -2,6 +2,7 @@ package com.sys1yagi.fragmentcreator.fragment;
 
 import com.sys1yagi.fragmentcreator.R;
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
+import com.sys1yagi.fragmentcreator.model.Product;
 import com.sys1yagi.fragmentcreator.model.Shop;
 
 import android.os.Bundle;
@@ -28,7 +29,7 @@ public class MainFragment extends Fragment {
 
     final static String ARGUMENTS_VALIDATOR = "Arguments Validator";
 
-    final static String TYPE_CONVERTER = "Type Converter";
+    final static String TYPE_SERIALIZER = "Type Serializer";
 
     final static String INHERITANCE = "Inheritance";
 
@@ -55,7 +56,7 @@ public class MainFragment extends Fragment {
         adapter.add(NO_ARGUMENTS);
         adapter.add(DEFAULT_VALUES);
         adapter.add(ARGUMENTS_VALIDATOR);
-        adapter.add(TYPE_CONVERTER);
+        adapter.add(TYPE_SERIALIZER);
         adapter.add(INHERITANCE);
         listView.setAdapter(adapter);
 
@@ -81,6 +82,9 @@ public class MainFragment extends Fragment {
                 break;
             case DEFAULT_VALUES:
                 openDefaultValueArgumentsFragment();
+                break;
+            case TYPE_SERIALIZER:
+                openTypeSerializerFragment();
                 break;
             default:
                 Toast.makeText(getContext(), "Not Yet Implemented...", Toast.LENGTH_SHORT).show();
@@ -134,6 +138,18 @@ public class MainFragment extends Fragment {
                         DefaultValueFragmentCreator
                                 .newBuilder()
                                 .build())
+                .commit();
+    }
+
+    void openTypeSerializerFragment() {
+        Product product = new Product();
+        product.setId(10);
+        product.setName("product");
+        getFragmentManager()
+                .beginTransaction()
+                .addToBackStack(TYPE_SERIALIZER)
+                .replace(R.id.container,
+                        TypeSerializerFragmentCreator.newBuilder(product).build())
                 .commit();
     }
 }
