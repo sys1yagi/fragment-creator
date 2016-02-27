@@ -2,9 +2,9 @@ package com.sys1yagi.fragmentcreator.model;
 
 public class Product {
 
-    int id;
+    public int id;
 
-    String name;
+    public String name;
 
     public int getId() {
         return id;

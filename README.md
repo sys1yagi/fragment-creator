@@ -109,6 +109,52 @@ public MainFragment extends Fragment {
 }
 ```
 
+### Type Serializer
+
+If you want to use the class such as the following, you can use the ArgsSerializer.
+
+```java
+// It is not Serializable or Parcelable.
+public class Product {
+
+    public int id;
+
+    public String name;
+}
+```
+
+At first, define a class that implements the ArgsSerializer.
+
+```java
+public class StringSerializer implements ArgsSerializer<Product, String> {
+
+    @Override
+    public String serialize(Product product) {
+        return product.getId() + "," + product.getName();
+    }
+
+    @Override
+    public Product deserialize(String str) {
+        String[] split = str.split(",");
+        Product product = new Product();
+        product.setId(Integer.parseInt(split[0]));
+        product.setName(split[1]);
+        return product;
+    }
+}
+```
+
+Set `@Serializer`.
+
+```java
+@FragmentCreator
+public class MainFragment extends Fragment {
+    @Args
+    @Serializer(to = String.class, serializer = StringSerializer.class)
+    Product product;
+//...
+```
+
 ### Supported types
 
 - primitive type
@@ -150,8 +196,8 @@ public MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.6.1'
-compile 'com.github.sys1yagi.fragment-creator:library:0.6.1'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.7.0'
+compile 'com.github.sys1yagi.fragment-creator:library:0.7.0'
 ```
 
 ## Development

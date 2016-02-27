@@ -6,6 +6,7 @@ import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
 import com.sys1yagi.fragmentcreator.annotation.Serializer;
 import com.sys1yagi.fragmentcreator.model.Product;
 import com.sys1yagi.fragmentcreator.tool.ParcelableSerializer;
+import com.sys1yagi.fragmentcreator.tool.StringSerializer;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -20,7 +21,7 @@ import android.widget.TextView;
 public class TypeSerializerFragment extends Fragment {
 
     @Args
-    @Serializer(to = Parcelable.class, serializer = ParcelableSerializer.class)
+    @Serializer(to = String.class, serializer = StringSerializer.class)
     Product product;
 
     @Override
