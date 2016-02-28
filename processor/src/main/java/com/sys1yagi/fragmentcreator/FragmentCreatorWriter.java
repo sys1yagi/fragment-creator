@@ -8,6 +8,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.exception.UnsupportedTypeException;
+import com.sys1yagi.fragmentcreator.util.ArrayListCreator;
 import com.sys1yagi.fragmentcreator.util.SerializerHolder;
 
 import android.os.Bundle;
@@ -23,9 +24,13 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.SimpleTypeVisitor6;
 
 public class FragmentCreatorWriter {
+
+    private final static String NOT_SUPPORT_TYPE = "NOT_SUPPORT_TYPE";
 
     FragmentCreatorModel model;
 
@@ -73,11 +78,13 @@ public class FragmentCreatorWriter {
     }
 
     private List<FieldSpec> createBuilderFields(List<VariableElement> argsList) {
+
         return argsList.stream().map(args ->
-                FieldSpec.builder(ClassName.get(args.asType()), args.getSimpleName().toString())
-                        .addModifiers(Modifier.PRIVATE)
-                        .build()
-        ).collect(Collectors.toList());
+        {
+            return FieldSpec.builder(ClassName.get(args.asType()), args.getSimpleName().toString())
+                    .addModifiers(Modifier.PRIVATE)
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     private MethodSpec createBuilderConstructor() {
@@ -142,24 +149,7 @@ public class FragmentCreatorWriter {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    // TODO
-    //    public  void putParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putParcelableArrayList(java.lang.String key, java.util.ArrayList<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putSparseParcelableArray(java.lang.String key, android.util.SparseArray<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putIntegerArrayList(java.lang.String key, java.util.ArrayList<java.lang.Integer> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putStringArrayList(java.lang.String key, java.util.ArrayList<java.lang.String> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putCharSequenceArrayList(java.lang.String key, java.util.ArrayList<java.lang.CharSequence> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putSerializable(java.lang.String key, java.io.Serializable value) { throw new RuntimeException("Stub!"); }
-    //    public  void putBooleanArray(java.lang.String key, boolean[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putByteArray(java.lang.String key, byte[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putShortArray(java.lang.String key, short[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putCharArray(java.lang.String key, char[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putIntArray(java.lang.String key, int[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putLongArray(java.lang.String key, long[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putFloatArray(java.lang.String key, float[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putDoubleArray(java.lang.String key, double[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putStringArray(java.lang.String key, java.lang.String[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
+    // bundle
     //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
 
     String extractPutMethod(TypeMirror typeMirror) {
@@ -199,22 +189,105 @@ public class FragmentCreatorWriter {
             case "java.io.Serializable":
                 return "args.putSerializable($S,";
             default:
+                String format;
+                format = extractPutIfList(typeMirror);
+                if (format != null) {
+                    return format;
+                }
+
+                format = extractPutIfArray(typeMirror);
+                if (format != null) {
+                    return format;
+                }
+
                 TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
                 if (typeElement != null) {
-                    String format = extractPutMethod(typeElement.getSuperclass());
+                    format = extractPutMethod(typeElement.getSuperclass());
                     if (format != null) {
                         return format;
                     }
                     return typeElement.getInterfaces().stream()
                             .map(this::extractPutMethod)
                             .filter(f -> f != null)
-                            .findFirst().get();
-
+                            .findFirst().orElse(null);
                 }
                 return null;
         }
     }
 
+    String extractPutIfArray(TypeMirror typeMirror) {
+        //TODO
+        // arrays
+        //    public  void putParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putSparseParcelableArray(java.lang.String key, android.util.SparseArray<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
+        //    public  void putBooleanArray(java.lang.String key, boolean[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putByteArray(java.lang.String key, byte[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putShortArray(java.lang.String key, short[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putCharArray(java.lang.String key, char[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putIntArray(java.lang.String key, int[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putLongArray(java.lang.String key, long[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putFloatArray(java.lang.String key, float[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putDoubleArray(java.lang.String key, double[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putStringArray(java.lang.String key, java.lang.String[] value) { throw new RuntimeException("Stub!"); }
+        //    public  void putCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
+        return null;
+    }
+
+    String extractPutIfList(TypeMirror typeMirror) {
+        String name = typeMirror.toString();
+        if (name.startsWith("java.util.List")) {
+            //check type
+            DeclaredType declaredType = typeMirror.accept(new SimpleTypeVisitor6<DeclaredType, String>() {
+                @Override
+                public DeclaredType visitDeclared(DeclaredType t, String s) {
+                    return t;
+                }
+            }, name);
+            if (declaredType == null) {
+                return null;
+            }
+            List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+            if (typeArguments.isEmpty()) {
+                return null;
+            }
+            TypeMirror typeParameter = typeArguments.get(0);
+            switch (flattenArrayListType(typeParameter)) {
+                case "java.lang.Integer":
+                    return "args.putIntegerArrayList($S,";
+                case "java.lang.String":
+                    return "args.putStringArrayList($S,";
+                case "java.lang.CharSequence":
+                    return "args.putCharSequenceArrayList($S,";
+                case "android.os.Parcelable":
+                    return "args.putParcelableArrayList($S,";
+            }
+        }
+        return null;
+    }
+
+    String flattenArrayListType(TypeMirror typeParameter) {
+        String typeName = typeParameter.toString();
+        switch (typeName) {
+            case "java.lang.Integer":
+            case "java.lang.String":
+            case "java.lang.CharSequence":
+            case "android.os.Parcelable":
+                return typeName;
+            default:
+                TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeParameter);
+                if (typeElement != null) {
+                    String flatten = flattenArrayListType(typeElement.getSuperclass());
+                    if (!NOT_SUPPORT_TYPE.equals(flatten)) {
+                        return flatten;
+                    }
+                    return typeElement.getInterfaces().stream()
+                            .map(this::flattenArrayListType)
+                            .filter(f -> f != null)
+                            .findFirst().orElse(NOT_SUPPORT_TYPE);
+                }
+        }
+        return NOT_SUPPORT_TYPE;
+    }
 
     void generatePutMethodCall(MethodSpec.Builder builder, VariableElement args) {
         String key = args.getSimpleName().toString();
@@ -230,7 +303,13 @@ public class FragmentCreatorWriter {
         }
 
         if (holder.isEmpty()) {
-            builder.addStatement(format + " $N)", key, args.getSimpleName());
+            if (format.contains("ArrayList")) {
+                builder.addStatement(format + " $T.create($N))", key,
+                        ClassName.get(ArrayListCreator.class),
+                        args.getSimpleName());
+            } else {
+                builder.addStatement(format + " $N)", key, args.getSimpleName());
+            }
         } else {
             builder.addStatement(format + " new $T().serialize($N))", key,
                     ClassName.get(holder.serializer),
@@ -258,24 +337,24 @@ public class FragmentCreatorWriter {
     }
 
     // TODO
-    //    public  void putParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putParcelableArrayList(java.lang.String key, java.util.ArrayList<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putSparseParcelableArray(java.lang.String key, android.util.SparseArray<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putIntegerArrayList(java.lang.String key, java.util.ArrayList<java.lang.Integer> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putStringArrayList(java.lang.String key, java.util.ArrayList<java.lang.String> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putCharSequenceArrayList(java.lang.String key, java.util.ArrayList<java.lang.CharSequence> value) { throw new RuntimeException("Stub!"); }
-    //    public  void putSerializable(java.lang.String key, java.io.Serializable value) { throw new RuntimeException("Stub!"); }
-    //    public  void putBooleanArray(java.lang.String key, boolean[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putByteArray(java.lang.String key, byte[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putShortArray(java.lang.String key, short[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putCharArray(java.lang.String key, char[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putIntArray(java.lang.String key, int[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putLongArray(java.lang.String key, long[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putFloatArray(java.lang.String key, float[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putDoubleArray(java.lang.String key, double[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putStringArray(java.lang.String key, java.lang.String[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
-    //    public  void putBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
+    //    public  void getParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getParcelableArrayList(java.lang.String key, java.util.ArrayList<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
+    //    public  void getSparseParcelableArray(java.lang.String key, android.util.SparseArray<? extends android.os.Parcelable> value) { throw new RuntimeException("Stub!"); }
+    //    public  void getIntegerArrayList(java.lang.String key, java.util.ArrayList<java.lang.Integer> value) { throw new RuntimeException("Stub!"); }
+    //    public  void getStringArrayList(java.lang.String key, java.util.ArrayList<java.lang.String> value) { throw new RuntimeException("Stub!"); }
+    //    public  void getCharSequenceArrayList(java.lang.String key, java.util.ArrayList<java.lang.CharSequence> value) { throw new RuntimeException("Stub!"); }
+    //    public  void getSerializable(java.lang.String key, java.io.Serializable value) { throw new RuntimeException("Stub!"); }
+    //    public  void getBooleanArray(java.lang.String key, boolean[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getByteArray(java.lang.String key, byte[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getShortArray(java.lang.String key, short[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getCharArray(java.lang.String key, char[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getIntArray(java.lang.String key, int[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getLongArray(java.lang.String key, long[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getFloatArray(java.lang.String key, float[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getDoubleArray(java.lang.String key, double[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getStringArray(java.lang.String key, java.lang.String[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getCharSequenceArray(java.lang.String key, java.lang.CharSequence[] value) { throw new RuntimeException("Stub!"); }
+    //    public  void getBundle(java.lang.String key, android.os.Bundle value) { throw new RuntimeException("Stub!"); }
 
     void createGetParameterWithDefaultValueInitializeStatement(MethodSpec.Builder builder, VariableElement param,
             TypeMirror typeMirror) {
@@ -373,16 +452,25 @@ public class FragmentCreatorWriter {
             case "java.io.Serializable":
                 return "($T)args.getSerializable($S)";
             default:
+                String format;
+                format = extractGetIfList(typeMirror);
+                if (format != null) {
+                    return format;
+                }
+                format = extractGetIfArray(typeMirror);
+                if (format != null) {
+                    return format;
+                }
                 TypeElement typeElement = (TypeElement) environment.getTypeUtils().asElement(typeMirror);
                 if (typeElement != null) {
-                    String format = extractParameterGetMethodFormat(typeElement.getSuperclass());
+                    format = extractParameterGetMethodFormat(typeElement.getSuperclass());
                     if (!"".equals(format)) {
                         return format;
                     }
                     return typeElement.getInterfaces().stream()
                             .map(this::extractParameterGetMethodFormat)
                             .filter(f -> f != null)
-                            .findFirst().get();
+                            .findFirst().orElse(null);
                 }
                 return "";
         }
@@ -428,6 +516,42 @@ public class FragmentCreatorWriter {
         } else {
             builder.addStatement("fragment.$N = $N", key, key);
         }
+    }
+
+    String extractGetIfArray(TypeMirror typeMirror) {
+        return null;
+    }
+
+    String extractGetIfList(TypeMirror typeMirror) {
+        String name = typeMirror.toString();
+        if (name.startsWith("java.util.List")) {
+            //check type
+            DeclaredType declaredType = typeMirror.accept(new SimpleTypeVisitor6<DeclaredType, String>() {
+                @Override
+                public DeclaredType visitDeclared(DeclaredType t, String s) {
+                    return t;
+                }
+            }, name);
+            if (declaredType == null) {
+                return null;
+            }
+            List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+            if (typeArguments.isEmpty()) {
+                return null;
+            }
+            TypeMirror typeParameter = typeArguments.get(0);
+            switch (flattenArrayListType(typeParameter)) {
+                case "java.lang.Integer":
+                    return "args.getIntegerArrayList($S)";
+                case "java.lang.String":
+                    return "args.getStringArrayList($S)";
+                case "java.lang.CharSequence":
+                    return "args.getCharSequenceArrayList($S)";
+                case "android.os.Parcelable":
+                    return "args.getParcelableArrayList($S)";
+            }
+        }
+        return null;
     }
 
     private void createParameterInitializeStatement(MethodSpec.Builder builder, VariableElement args) {

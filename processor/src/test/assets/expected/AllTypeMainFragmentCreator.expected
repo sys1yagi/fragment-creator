@@ -3,9 +3,11 @@ package com.sys1yagi.fragmentcreator.fragment;
 import android.os.Bundle;
 import android.os.Parcelable;
 import com.sys1yagi.fragmentcreator.FragmentCreator;
+import com.sys1yagi.fragmentcreator.util.ArrayListCreator;
 import java.io.Serializable;
 import java.lang.CharSequence;
 import java.lang.String;
+import java.util.List;
 
 public final class MainFragmentCreator extends FragmentCreator {
   public static void read(MainFragment fragment) {
@@ -43,12 +45,15 @@ public final class MainFragmentCreator extends FragmentCreator {
     Parcelable parcelable = args.getParcelable("parcelable");
     FragmentCreator.checkRequire(parcelable, "parcelable");
     fragment.parcelable = parcelable;
+    List<MainFragment.Shop> parcelableList = args.getParcelableArrayList("parcelableList");
+    FragmentCreator.checkRequire(parcelableList, "parcelableList");
+    fragment.parcelableList = parcelableList;
     Serializable serializable = (Serializable)args.getSerializable("serializable");
     FragmentCreator.checkRequire(serializable, "serializable");
     fragment.serializable = serializable;
   }
 
-  public static Builder newBuilder(String keyword, boolean flag, byte aByte, char aChar, short aShort, int anInt, long aLong, float aFloat, double aDouble, CharSequence charSequence, Parcelable parcelable, Serializable serializable) {
+  public static Builder newBuilder(String keyword, boolean flag, byte aByte, char aChar, short aShort, int anInt, long aLong, float aFloat, double aDouble, CharSequence charSequence, Parcelable parcelable, List<MainFragment.Shop> parcelableList, Serializable serializable) {
       Builder builder = new Builder();
       builder.keyword = keyword;
       builder.flag = flag;
@@ -61,6 +66,7 @@ public final class MainFragmentCreator extends FragmentCreator {
       builder.aDouble = aDouble;
       builder.charSequence = charSequence;
       builder.parcelable = parcelable;
+      builder.parcelableList = parcelableList;
       builder.serializable = serializable;
       return builder;
   }
@@ -88,6 +94,8 @@ public final class MainFragmentCreator extends FragmentCreator {
 
     private Parcelable parcelable;
 
+    private List<MainFragment.Shop> parcelableList;
+
     private Serializable serializable;
 
     private Builder() {
@@ -107,6 +115,7 @@ public final class MainFragmentCreator extends FragmentCreator {
       args.putDouble("aDouble", aDouble);
       args.putCharSequence("charSequence", charSequence);
       args.putParcelable("parcelable", parcelable);
+      args.putParcelableArrayList("parcelableList", ArrayListCreator.create(parcelableList));
       args.putSerializable("serializable", serializable);
       fragment.setArguments(args);
       return fragment;
