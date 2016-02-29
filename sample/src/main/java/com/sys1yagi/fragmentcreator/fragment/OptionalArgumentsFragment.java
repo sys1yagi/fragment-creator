@@ -4,6 +4,7 @@ import com.sys1yagi.fragmentcreator.R;
 import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
 import com.sys1yagi.fragmentcreator.log.Logger;
+import com.sys1yagi.fragmentcreator.model.Shop;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.List;
 
 @FragmentCreator
 public class OptionalArgumentsFragment extends Fragment {
@@ -24,6 +27,9 @@ public class OptionalArgumentsFragment extends Fragment {
 
     @Args(require = false)
     Logger logger;
+
+    @Args(require = false)
+    List<Shop> shops;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,5 +49,8 @@ public class OptionalArgumentsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ((TextView) view.findViewById(R.id.id)).setText(Long.toString(id));
         ((TextView) view.findViewById(R.id.keyword)).setText(keyword);
+        if (shops != null) {
+            ((TextView) view.findViewById(R.id.shop_count)).setText(String.valueOf(shops.size()));
+        }
     }
 }

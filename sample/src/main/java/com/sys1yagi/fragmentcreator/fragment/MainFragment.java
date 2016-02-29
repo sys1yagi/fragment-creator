@@ -16,6 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @FragmentCreator
 public class MainFragment extends Fragment {
 
@@ -104,6 +107,11 @@ public class MainFragment extends Fragment {
     }
 
     void openOptionalArgumentsFragment() {
+        List<Shop> shops = new ArrayList<>();
+        shops.add(new Shop());
+        shops.add(new Shop());
+        shops.add(new Shop());
+
         getFragmentManager()
                 .beginTransaction()
                 .addToBackStack(OPTIONAL_ARGUMENTS)
@@ -113,6 +121,7 @@ public class MainFragment extends Fragment {
                                 .newBuilder()
                                 .setId(10)
                                 .setKeyword("test")
+                                .setShops(shops)
                                 .build())
                 .commit();
     }

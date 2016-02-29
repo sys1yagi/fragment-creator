@@ -158,27 +158,27 @@ public class MainFragment extends Fragment {
 ### Supported types
 
 - primitive type
-- java.lang.String
-- java.lang.Boolean
-- java.lang.Byte
-- java.lang.Character
-- java.lang.Short
-- java.lang.Integer
-- java.lang.Long
-- java.lang.Float
-- java.lang.Double
-- java.lang.CharSequence
-- android.os.Parcelable
-- java.io.Serializable
+- `java.lang.String`
+- `java.lang.Boolean`
+- `java.lang.Byte`
+- `java.lang.Character`
+- `java.lang.Short`
+- `java.lang.Integer`
+- `java.lang.Long`
+- `java.lang.Float`
+- `java.lang.Double`
+- `java.lang.CharSequence`
+- `android.os.Parcelable`
+- `java.io.Serializable`
+- `java.util.ArrayList<? extends android.os.Parcelable>`
+- `java.util.ArrayList<java.lang.Integer>`
+- `java.util.ArrayList<java.lang.String>`
+- `java.util.ArrayList<java.lang.CharSequence>`
 
 ### Not supported yet
 
 - `android.os.Parcelable[]`
-- `java.util.ArrayList<? extends android.os.Parcelable>`
 - `android.util.SparseArray<? extends android.os.Parcelable>`
-- `java.util.ArrayList<java.lang.Integer>`
-- `java.util.ArrayList<java.lang.String>`
-- `java.util.ArrayList<java.lang.CharSequence>`
 - `boolean[]`
 - `byte[]`
 - `short[]`
@@ -196,8 +196,8 @@ public class MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.7.0'
-compile 'com.github.sys1yagi.fragment-creator:library:0.7.0'
+apt 'com.github.sys1yagi.fragment-creator:processor:0.8.1'
+compile 'com.github.sys1yagi.fragment-creator:library:0.8.1'
 ```
 
 ## Development
