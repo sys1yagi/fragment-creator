@@ -1,7 +1,8 @@
-package com.sys1yagi.fragmentcreator;
+package com.sys1yagi.fragmentcreator.model;
 
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
 import com.sys1yagi.fragmentcreator.exception.IllegalTypeException;
+import com.sys1yagi.fragmentcreator.model.FragmentCreatorModel;
 
 import java.util.ArrayList;
 import java.util.List;

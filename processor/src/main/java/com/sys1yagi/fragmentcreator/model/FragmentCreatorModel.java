@@ -1,4 +1,4 @@
-package com.sys1yagi.fragmentcreator;
+package com.sys1yagi.fragmentcreator.model;
 
 import com.sys1yagi.fragmentcreator.annotation.Args;
 
