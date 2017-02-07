@@ -7,7 +7,7 @@ public abstract class FragmentCreator {
 
     public static void checkRequire(Object param, String paramName) {
         if (param == null) {
-            throw new UnsupportedTypeException(paramName + "is required.");
+            throw new UnsupportedTypeException(paramName + "　is required.");
         }
     }
 
