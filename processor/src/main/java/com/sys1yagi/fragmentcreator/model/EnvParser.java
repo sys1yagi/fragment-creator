@@ -43,6 +43,7 @@ public class EnvParser {
                                         + superClass.toString());
                     case "android.app.Fragment":
                     case "android.support.v4.app.Fragment":
+                    case "androidx.fragment.app.Fragment":
                         break BASE_CLASS_CHECK;
                 }
                 DeclaredType superClassType = (DeclaredType) superClass;
