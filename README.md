@@ -8,6 +8,11 @@ I wrote the newInstance method every time when declaring a new Fragment. Then, c
 
 This library helps you to manage fragment class creation and arguments.
 
+# Fragment Creator 2.0.0
+
+Fragment Creator 2.0.0 or later supports AndroidX.
+It can be used only with androidx.fragment.app.Fragment.
+
 ## How to use
 
 ### Annotate the arguments of Fragment
@@ -196,8 +201,8 @@ public class MainFragment extends Fragment {
 This library is distributed by [JitPack](https://jitpack.io/). Add dependencies your build.gradle
 
 ```
-apt 'com.github.sys1yagi.fragment-creator:processor:0.8.1'
-compile 'com.github.sys1yagi.fragment-creator:library:0.8.1'
+apt 'com.github.sys1yagi.fragment-creator:processor:2.0.0'
+compile 'com.github.sys1yagi.fragment-creator:library:2.0.0'
 ```
 
 ## Development

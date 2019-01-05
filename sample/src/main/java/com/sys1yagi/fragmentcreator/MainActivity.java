@@ -3,8 +3,8 @@ package com.sys1yagi.fragmentcreator;
 import com.sys1yagi.fragmentcreator.fragment.MainFragmentCreator;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 public class MainActivity extends AppCompatActivity {
