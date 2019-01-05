@@ -1,22 +1,26 @@
 import com.sys1yagi.fragmentcreator.AndroidJarDependencyPlugin
+import com.sys1yagi.fragmentcreator.AarToJarConversionPlugin
 
 apply plugin: 'java'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.sys1yagi.fragmentcreator'
 apply plugin: AndroidJarDependencyPlugin
+apply plugin: AarToJarConversionPlugin
 
 dependencies {
     implementation project(path: ':library', configuration: 'default')
     implementation 'com.squareup:javapoet:1.9.0'
     implementation 'com.google.auto.service:auto-service:1.0-rc2'
-//    implementation 'com.google.android:support-v4:r7'
     implementation 'androidx.annotation:annotation:1.0.1'
+    implementation 'androidx.fragment:fragment:1.0.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:1.7.0'
     testImplementation androidJar()
     testImplementation 'com.google.testing.compile:compile-testing:0.15'
     testImplementation 'org.mockito:mockito-core:2.7.6'
     testImplementation 'commons-io:commons-io:2.6'
+    testImplementation 'androidx.fragment:fragment:1.0.0'
+
 }
 
 sourceSets {
