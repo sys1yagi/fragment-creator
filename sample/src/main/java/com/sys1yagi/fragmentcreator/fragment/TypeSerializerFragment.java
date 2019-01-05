@@ -5,13 +5,12 @@ import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
 import com.sys1yagi.fragmentcreator.annotation.Serializer;
 import com.sys1yagi.fragmentcreator.model.Product;
-import com.sys1yagi.fragmentcreator.tool.ParcelableSerializer;
 import com.sys1yagi.fragmentcreator.tool.StringSerializer;
 
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

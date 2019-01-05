@@ -13,8 +13,6 @@ import com.sys1yagi.fragmentcreator.util.MirrorUtils;
 import com.sys1yagi.fragmentcreator.util.SerializerHolder;
 import com.sys1yagi.fragmentcreator.util.StringUtils;
 
-import android.os.Bundle;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,7 +105,9 @@ public class FragmentCreatorBuilderGenerator {
         builder.addModifiers(Modifier.PUBLIC).returns(typeName);
         builder.addStatement("$T fragment = new $T()", typeName, typeName);
 
-        builder.addStatement("$T args = new $T()", ClassName.get(Bundle.class), ClassName.get(Bundle.class));
+
+        ClassName bundle = ClassName.get("android.os", "Bundle");
+        builder.addStatement("$T args = new $T()", bundle, bundle);
 
         argsList.forEach(param -> generatePutMethodCall(builder, param));
 
@@ -260,7 +260,6 @@ public class FragmentCreatorBuilderGenerator {
         }
         return null;
     }
-
 
 
 }

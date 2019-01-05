@@ -2,7 +2,6 @@ package com.sys1yagi.fragmentcreator.model;
 
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
 import com.sys1yagi.fragmentcreator.exception.IllegalTypeException;
-import com.sys1yagi.fragmentcreator.model.FragmentCreatorModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +31,15 @@ public class EnvParser {
     public static void validateFragmentCreatorModel(List<FragmentCreatorModel> models) {
         for (FragmentCreatorModel model : models) {
             TypeMirror superClass = model.getElement().getSuperclass();
-
+            System.out.println(model.getElement().getClass());
             BASE_CLASS_CHECK:
             while (true) {
                 String fqcn = superClass.toString();
+                System.out.println(fqcn  + ":" + superClass.getClass().getName());
                 switch (fqcn) {
                     case "java.lang.Object":
                         throw new IllegalTypeException(
-                                "@FragmentCreator can be defined only if the base class is android.app.Fragment or android.support.v4.app.Fragment. : "
+                                "@FragmentCreator can be defined only if the base class is androidx.fragment.app.Fragment. : "
                                         + superClass.toString());
                     case "android.app.Fragment":
                     case "android.support.v4.app.Fragment":

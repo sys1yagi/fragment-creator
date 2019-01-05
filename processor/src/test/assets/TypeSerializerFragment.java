@@ -5,7 +5,7 @@ import com.sys1yagi.fragmentcreator.annotation.Args;
 import com.sys1yagi.fragmentcreator.annotation.FragmentCreator;
 import com.sys1yagi.fragmentcreator.annotation.Serializer;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 @FragmentCreator
 public class MainFragment extends Fragment {

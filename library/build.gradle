@@ -4,14 +4,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.sys1yagi.fragmentcreator'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "2.0.0"
     }
     buildTypes {
         release {
@@ -26,5 +26,5 @@ android {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
