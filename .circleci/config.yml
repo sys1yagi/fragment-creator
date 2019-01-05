@@ -32,6 +32,7 @@ jobs:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "sample/build.gradle" }}
+      - run: *create_gradle_properties
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
@@ -39,7 +40,6 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "sample/build.gradle" }}
-      - run: *create_gradle_properties
       - run:
           name: Run assemble
           no_output_timeout: 30m
