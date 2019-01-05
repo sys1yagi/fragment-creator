@@ -52,4 +52,4 @@ workflows:
   version: 2
   master:
     jobs:
-      - build_master:
+      - build_master
