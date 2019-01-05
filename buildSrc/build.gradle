@@ -1,3 +1,5 @@
+// ref https://github.com/permissions-dispatcher/PermissionsDispatcher/commit/a5e0cacdc8fcdef8c5399b2462e0b852b1115b31
+
 apply plugin: "groovy"
 
 repositories {

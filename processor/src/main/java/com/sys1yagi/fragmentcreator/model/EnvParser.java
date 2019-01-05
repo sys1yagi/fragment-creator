@@ -31,11 +31,9 @@ public class EnvParser {
     public static void validateFragmentCreatorModel(List<FragmentCreatorModel> models) {
         for (FragmentCreatorModel model : models) {
             TypeMirror superClass = model.getElement().getSuperclass();
-            System.out.println(model.getElement().getClass());
             BASE_CLASS_CHECK:
             while (true) {
                 String fqcn = superClass.toString();
-                System.out.println(fqcn  + ":" + superClass.getClass().getName());
                 switch (fqcn) {
                     case "java.lang.Object":
                         throw new IllegalTypeException(

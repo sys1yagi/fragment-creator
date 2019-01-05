@@ -2,6 +2,7 @@ package com.sys1yagi.fragmentcreator;
 
 import com.google.testing.compile.JavaFileObjects;
 
+import com.sys1yagi.fragmentcreator.testtool.AndroidAwareClassLoader;
 import com.sys1yagi.fragmentcreator.testtool.AssetsUtils;
 
 import org.junit.Test;
@@ -12,21 +13,22 @@ import static com.google.common.truth.Truth.assert_;
 import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 public class FragmentCreatorProcessorTest {
-
+    private static final ClassLoader ANDROID_AWARE_CLASSLOADER = AndroidAwareClassLoader.create();
 
     @Test
     public void illegalTypeException() throws Exception {
         String javaFile = AssetsUtils.readString("InvalidMainFragment.java");
 
         JavaFileObject exampleFragment = JavaFileObjects
-                .forSourceString("InvalidMainFragment", javaFile);
+            .forSourceString("InvalidMainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(exampleFragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .failsToCompile()
-                .withErrorContaining(
-                        "@FragmentCreator can be defined only if the base class is android.app.Fragment or android.support.v4.app.Fragment. : java.lang.Object");
+            .that(exampleFragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .failsToCompile()
+            .withErrorContaining(
+                "@FragmentCreator can be defined only if the base class is androidx.fragment.app.Fragment. : java.lang.Object");
     }
 
     @Test
@@ -34,16 +36,17 @@ public class FragmentCreatorProcessorTest {
         String javaFile = AssetsUtils.readString("OptionalOnlyMainFragment.java");
 
         JavaFileObject exampleFragment = JavaFileObjects
-                .forSourceString("MainFragment", javaFile);
+            .forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(exampleFragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/OptionalOnlyMainFragmentCreator.expected")));
+            .that(exampleFragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(JavaFileObjects
+                .forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/OptionalOnlyMainFragmentCreator.expected")));
     }
 
     @Test
@@ -51,17 +54,18 @@ public class FragmentCreatorProcessorTest {
         String javaFile = AssetsUtils.readString("RequireOnlyMainFragment.java");
 
         JavaFileObject exampleFragment = JavaFileObjects
-                .forSourceString("MainFragment", javaFile);
+            .forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(exampleFragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(
-                        JavaFileObjects.forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/RequireOnlyMainFragmentCreator.expected"))
-                );
+            .that(exampleFragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(
+                JavaFileObjects.forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/RequireOnlyMainFragmentCreator.expected"))
+            );
     }
 
     @Test
@@ -69,12 +73,13 @@ public class FragmentCreatorProcessorTest {
         String javaFile = AssetsUtils.readString("SupportV4MainFragment.java");
 
         JavaFileObject exampleFragment = JavaFileObjects
-                .forSourceString("SupportV4MainFragment", javaFile);
+            .forSourceString("SupportV4MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(exampleFragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError();
+            .that(exampleFragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError();
     }
 
     @Test
@@ -82,16 +87,17 @@ public class FragmentCreatorProcessorTest {
         String javaFile = AssetsUtils.readString("AllTypeMainFragment.java");
 
         JavaFileObject exampleFragment = JavaFileObjects
-                .forSourceString("MainFragment", javaFile);
+            .forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(exampleFragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/AllTypeMainFragmentCreator.expected")));
+            .that(exampleFragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(JavaFileObjects
+                .forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/AllTypeMainFragmentCreator.expected")));
 
         //TODO
         //    public  void putParcelableArray(java.lang.String key, android.os.Parcelable[] value) { throw new RuntimeException("Stub!"); }
@@ -121,13 +127,14 @@ public class FragmentCreatorProcessorTest {
         JavaFileObject exampleFragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(exampleFragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/ComplexSerializableMainFragmentCreator.expected")));
+            .that(exampleFragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(JavaFileObjects
+                .forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/ComplexSerializableMainFragmentCreator.expected")));
     }
 
     @Test
@@ -136,13 +143,14 @@ public class FragmentCreatorProcessorTest {
         JavaFileObject fragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(fragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/DefaultValueMainFragmentCreator.expected")));
+            .that(fragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(JavaFileObjects
+                .forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/DefaultValueMainFragmentCreator.expected")));
     }
 
     @Test
@@ -151,13 +159,14 @@ public class FragmentCreatorProcessorTest {
         JavaFileObject fragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(fragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/TypeSerializerMainFragmentCreator.expected")));
+            .that(fragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(JavaFileObjects
+                .forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/TypeSerializerMainFragmentCreator.expected")));
     }
 
     @Test
@@ -166,13 +175,14 @@ public class FragmentCreatorProcessorTest {
         JavaFileObject fragment = JavaFileObjects.forSourceString("MainFragment", javaFile);
 
         assert_().about(javaSource())
-                .that(fragment)
-                .processedWith(new FragmentCreatorProcessor())
-                .compilesWithoutError()
-                .and()
-                .generatesSources(JavaFileObjects
-                        .forSourceString("MainFragmentCreator",
-                                AssetsUtils.readString("expected/TypeSerializerWithSerializableMainFragmentCreator.expected")));
+            .that(fragment)
+            .withClasspathFrom(ANDROID_AWARE_CLASSLOADER)
+            .processedWith(new FragmentCreatorProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(JavaFileObjects
+                .forSourceString("MainFragmentCreator",
+                    AssetsUtils.readString("expected/TypeSerializerWithSerializableMainFragmentCreator.expected")));
     }
 
     //TODO unsupported parameter
