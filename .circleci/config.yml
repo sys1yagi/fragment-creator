@@ -59,7 +59,7 @@ jobs:
           path: sample/build/outputs/apk/debug
           destination: apks
       - store_test_results:
-          path: sample/build/test-results
+          path: processor/build/test-results
       - persist_to_workspace:
           root: ~/code
           paths:
