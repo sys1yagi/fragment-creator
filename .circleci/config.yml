@@ -20,7 +20,6 @@ references:
         echo "android.enableJetifier=true" >> gradle.properties
         cat gradle.properties
         echo "sdk.dir=$ANDROID_HOME" > local.properties
-        cp debug.keystore ~/.android
     prepare_release_build: &prepare_release_build
       name: prepare release build
       command: unzip -P $RELEASE_FILE_PASS ./app/signingConfigs/release.zip -d ./app/signingConfigs/
