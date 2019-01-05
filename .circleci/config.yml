@@ -8,6 +8,22 @@ defaults: &defaults
     JVM_OPTS: -Xmx2048m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs='-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'"
     _JAVA_OPTIONS: "-Xmx1500m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2"
+references:
+  commands:
+    create_gradle_properties: &create_gradle_properties
+      name: create gradle properties
+      command: |
+        rm -fr gradle.properties
+        rm -fr local.properties
+        echo "COMPILE_SDK_VERSION=android-28" > gradle.properties
+        echo "android.useAndroidX=true" >> gradle.properties
+        echo "android.enableJetifier=true" >> gradle.properties
+        cat gradle.properties
+        echo "sdk.dir=$ANDROID_HOME" > local.properties
+        cp debug.keystore ~/.android
+    prepare_release_build: &prepare_release_build
+      name: prepare release build
+      command: unzip -P $RELEASE_FILE_PASS ./app/signingConfigs/release.zip -d ./app/signingConfigs/
 
 jobs:
   build_master:
@@ -23,6 +39,7 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "sample/build.gradle" }}
+      - run: *create_gradle_properties
       - run:
           name: Run assemble
           no_output_timeout: 30m
