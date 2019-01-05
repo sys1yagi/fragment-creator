@@ -25,11 +25,11 @@ android {
 
 dependencies {
     //for development
-    implementation project(':library')
-    annotationProcessor project(':processor')
+//    implementation project(':library')
+//    annotationProcessor project(':processor')
 
-//    annotationProcessor 'com.github.sys1yagi.fragment-creator:processor:1.0.0'
-//    implementation 'com.github.sys1yagi.fragment-creator:library:1.0.0'
+    annotationProcessor 'com.github.sys1yagi.fragment-creator:processor:2.0.0'
+    implementation 'com.github.sys1yagi.fragment-creator:library:2.0.0'
 
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
